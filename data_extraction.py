@@ -1,6 +1,6 @@
 import os
 import pickle
-
+import pandas as pd
 import mediapipe as mp
 import cv2
 import matplotlib.pyplot as plt
@@ -51,4 +51,11 @@ for dir_ in os.listdir(DATA_DIR):
             data.append(data_relative)
             labels.append(dir_)
 
-print(data)
+
+
+df_data = pd.DataFrame(data)
+
+df_labels = pd.DataFrame(labels, columns=['target'])
+df = pd.concat([df_data, df_labels], axis=1)
+
+df.to_csv('my_dataset.csv', index=False)
