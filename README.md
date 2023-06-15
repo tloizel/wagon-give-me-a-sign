@@ -3,4 +3,4 @@
 Emma 🫶
 Thomas 🫶
 Paul 🏋️
-Thierry
+Thierry 🏋️
