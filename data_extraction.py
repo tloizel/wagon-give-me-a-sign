@@ -50,3 +50,5 @@ for dir_ in os.listdir(DATA_DIR):
 
             data.append(data_relative)
             labels.append(dir_)
+
+print(data)
