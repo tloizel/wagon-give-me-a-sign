@@ -45,70 +45,43 @@ while cap.isOpened():
             wrist_z = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].z
 
             # Use the absolute coordinates
-            cv2.putText(frame, "Absolute",
-                        (100, 50),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        1.3,
-                        (0, 255, 0),
-                        3,
-                        cv2.LINE_AA)
+            c_a = 50
+            for i in ["Absolute", thumb_tip_x,thumb_tip_y, thumb_tip_z]:
 
-            cv2.putText(frame, f"X : {round(thumb_tip_x,2)}",
-                        (100, 100),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        1.3,
-                        (0, 255, 0),
-                        3,
-                        cv2.LINE_AA)
+                if isinstance(i,str):
+                    print_ = i
+                else:
+                    print_ =  f"X : {round(i,2)}"
 
-            cv2.putText(frame, f"Y : {round(thumb_tip_y,2)}",
-                        (100, 150),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        1.3,
-                        (0, 255, 0),
-                        3,
-                        cv2.LINE_AA)
+                cv2.putText(frame,
+                            print_,
+                            (100, c_a),
+                            cv2.FONT_HERSHEY_SIMPLEX,
+                            1.3,
+                            (0, 255, 0),
+                            3,
+                            cv2.LINE_AA)
+                c_a+=50
 
-            cv2.putText(frame, f"Z : {round(thumb_tip_z,2)}",
-                        (100, 200),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        1.3,
-                        (0, 255, 0),
-                        3,
-                        cv2.LINE_AA)
+            c_r = 50
+            for i in ["Relative", thumb_tip_x - wrist_x,thumb_tip_y - wrist_y, thumb_tip_z - wrist_z]:
 
-            # Use the relative coordinates
-            cv2.putText(frame, "Relative",
-                        (500, 50),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        1.3,
-                        (0, 255, 0),
-                        3,
-                        cv2.LINE_AA)
+                if isinstance(i,str):
+                    print_ = i
+                else:
+                    print_ =  f"X : {round(i,2)}"
 
-            cv2.putText(frame, f"X : {round(thumb_tip_x - wrist_x,2)}",
-                        (500, 100),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        1.3,
-                        (0, 255, 0),
-                        3,
-                        cv2.LINE_AA)
+                cv2.putText(frame,
+                            print_,
+                            (500, c_r),
+                            cv2.FONT_HERSHEY_SIMPLEX,
+                            1.3,
+                            (0, 255, 0),
+                            3,
+                            cv2.LINE_AA)
+                c_r+=50
 
-            cv2.putText(frame, f"Y : {round(thumb_tip_y - wrist_y,2)}",
-                        (500, 150),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        1.3,
-                        (0, 255, 0),
-                        3,
-                        cv2.LINE_AA)
 
-            cv2.putText(frame, f"Z : {round(thumb_tip_z - wrist_z,2)}",
-                        (500, 200),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        1.3,
-                        (0, 255, 0),
-                        3,
-                        cv2.LINE_AA)
 
     # Affiche l'image
     cv2.imshow('Hand Tracking', frame)
