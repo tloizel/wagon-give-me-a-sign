@@ -1,10 +1,11 @@
 import cv2
 import mediapipe as mp
 
+
 # Initialise MediaPipe Hands
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(static_image_mode=False,
-                      max_num_hands=2,
+                      max_num_hands=1,
                       min_detection_confidence=0.7)
 
 # Initialise MediaPipe Drawing
@@ -25,7 +26,11 @@ while cap.isOpened():
     # Dessine les résultats
     if results.multi_hand_landmarks:
         for hand_landmarks in results.multi_hand_landmarks:
-            mp_draw.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+            mp_draw.draw_landmarks(frame,
+                                   hand_landmarks,
+                                   mp_hands.HAND_CONNECTIONS,
+                                   mp.solutions.drawing_styles.get_default_hand_landmarks_style(),
+                                   mp.solutions.drawing_styles.get_default_hand_connections_style())
 
     # Affiche l'image
     cv2.imshow('Hand Tracking', frame)
