@@ -16,8 +16,12 @@ google-cloud-bigquery
 google-cloud-storage
 db-dtypes
 pyarrow
-mediapipe
 protobuf
+
+#our project
+opencv-python
+mediapipe
+
 
 # Trick to install the version of Tensorflow depending on your processor: darwin == Mac, ARM == M1
 tensorflow-macos==2.13.0rc1; sys_platform == 'darwin' and 'ARM' in platform_version # Mac M-chips
