@@ -46,12 +46,12 @@ while cap.isOpened():
 
             # Use the absolute coordinates
             c_a = 50
-            for i in ["Absolute", thumb_tip_x,thumb_tip_y, thumb_tip_z]:
+            for i in ["Absolute", ["X", thumb_tip_x],["Y", thumb_tip_y], ["Z", thumb_tip_z]]:
 
                 if isinstance(i,str):
                     print_ = i
                 else:
-                    print_ =  f"X : {round(i,2)}"
+                    print_ =  f"{i[0]} : {round(i[1],2)}"
 
                 cv2.putText(frame,
                             print_,
@@ -64,12 +64,12 @@ while cap.isOpened():
                 c_a+=50
 
             c_r = 50
-            for i in ["Relative", thumb_tip_x - wrist_x,thumb_tip_y - wrist_y, thumb_tip_z - wrist_z]:
+            for i in ["Relative", ["X", thumb_tip_x - wrist_x],["Y", thumb_tip_y - wrist_y], ["Z", thumb_tip_z - wrist_z]]:
 
                 if isinstance(i,str):
                     print_ = i
                 else:
-                    print_ =  f"X : {round(i,2)}"
+                    print_ =  f"{i[0]}: {round(i[1],2)}"
 
                 cv2.putText(frame,
                             print_,
