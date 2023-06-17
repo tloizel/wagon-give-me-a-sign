@@ -3,4 +3,4 @@ raw_data/
 bq_keys.json
 .env
 .envrc
-__pycache__/
+__pycache__/*
