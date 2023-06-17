@@ -4,3 +4,4 @@ notebooks/
 bq_keys.json
 .env
 .envrc
+__pycache__/
