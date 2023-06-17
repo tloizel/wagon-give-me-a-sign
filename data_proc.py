@@ -1,6 +1,7 @@
 from load_from_bq import load_from_bq
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from data_extraction import get_coordinates
 
 
 df = load_from_bq()
@@ -78,3 +79,9 @@ def preproc(df, test_size=0.3, random_state=42):
     X_train_df, X_test_df, y_train_df, y_test_df = train_test_df(balanced_df, test_size=test_size, random_state=random_state)
 
     return X_train_df, X_test_df, y_train_df, y_test_df
+
+
+def preproc_predict(image):
+    coords = pd.DataFrame(get_coordinates(image))
+    coords = coords.drop(['x_0','y_0','z_0'], axis=1)
+    return coords
