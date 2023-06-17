@@ -40,7 +40,7 @@ def create_and_fit_model_ml(X_train, y_train):
     return best_clf
 
 
-def evaluate_model_ml_crossvall(model, X, y, cv=5):
+def evaluate_model_ml_crossval(model, X, y, cv=5):
     """
     Evaluer le model de Machine learning avec méthode de cross vall et CV de 5
     """
