@@ -26,18 +26,18 @@ for dir_ in os.listdir(DATA_DIR):
         coords={}
         if results.multi_hand_landmarks:
             for hand_landmarks in results.multi_hand_landmarks:
+                wrist_x = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].x
+                wrist_y = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].y
+                wrist_z = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].z
+
                 for i in range(len(hand_landmarks.landmark)):
                     x = hand_landmarks.landmark[i].x
                     y = hand_landmarks.landmark[i].y
                     z = hand_landmarks.landmark[i].z
 
-                for i in range(len(hand_landmarks.landmark)):
-                    wrist_x = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].x
-                    wrist_y = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].y
-                    wrist_z = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].z
                     coords[f"x_{i}"]= x - wrist_x
                     coords[f"y_{i}"]= y - wrist_y
-                    coords[f"z_{i}"]=z - wrist_z
+                    coords[f"z_{i}"]= z - wrist_z
 
             coords["target"]=dir_
             data.append(coords)

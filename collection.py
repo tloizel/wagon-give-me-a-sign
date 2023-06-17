@@ -9,7 +9,7 @@ if not os.path.exists(DATA_DIR):
     os.makedirs(DATA_DIR)
 
 alphabet = list(string.ascii_lowercase)
-dataset_size = 100 #each of us should do 100, 400 in total per letter
+dataset_size = 10 #each of us should do 100, 400 in total per letter
 
 cap = cv2.VideoCapture(0)
 for j in alphabet:
