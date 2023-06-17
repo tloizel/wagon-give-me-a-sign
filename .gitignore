@@ -3,3 +3,4 @@ raw_data/
 notebooks/
 bq_keys.json
 .env
+.envrc
