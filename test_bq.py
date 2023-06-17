@@ -1,26 +1,15 @@
 import pandas
-import pandas_gbq
 from google.cloud import bigquery
 from google.oauth2 import service_account
+from params import PROJECT_ID, TABLE_ID
 
-credentials = service_account.Credentials.from_service_account_file("bg_keys.json")
+from data_extraction import get_coordinates
 
+df = get_coordinates()
 
-# TODO: Set project_id to your Google Cloud Platform project ID.
-project_id = "wagon-give-me-a-sign"
+credentials = service_account.Credentials.from_service_account_file("bq_keys.json")
 
-# TODO: Set table_id to the full destination table ID (including the
-#       dataset ID).
-table_id = 'test_dataset.test2'
-
-df = pandas.DataFrame(
-    {
-        "letter": ["t", "b", "c"],
-        "num": [4.0, 5.0, 6.0],
-    }
-)
-
-client = bigquery.Client(project='wagon-give-me-a-sign', credentials=credentials)
-client.load_table_from_dataframe(df, table_id)
+client = bigquery.Client(project=PROJECT_ID, credentials=credentials)
+client.load_table_from_dataframe(df, TABLE_ID)
 
 # print(client.get_table(table_id).num_rows)
