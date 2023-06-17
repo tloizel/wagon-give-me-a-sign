@@ -1,5 +1,4 @@
 import os
-
 import mediapipe as mp
 import cv2
 import matplotlib.pyplot as plt
