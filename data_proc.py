@@ -35,19 +35,24 @@ def shuffle_targets(df):
 
 def train_test_df(df, test_size=0.3, random_state=42):
 
-    train_df = pd.DataFrame()
-    test_df = pd.DataFrame()
+    df = df.reset_index(drop=True)
+
+    X_train_df = pd.DataFrame()
+    X_test_df = pd.DataFrame()
+    y_train_df = pd.DataFrame()
+    y_test_df = pd.DataFrame()
 
     for letter in df['target'].unique():
         sub_df = df[df['target']==letter]
-        train_data, test_data = train_test_split(sub_df, test_size=test_size, random_state=random_state)
-        train_df = pd.concat([train_df,train_data])
-        test_df = pd.concat([test_df,test_data])
+        X = sub_df.drop('target', axis=1)
+        y = sub_df['target']
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+        X_train_df = pd.concat([X_train_df, X_train])
+        X_test_df = pd.concat([X_test_df, X_test])
+        y_train_df = pd.concat([y_train_df, y_train])
+        y_test_df = pd.concat([y_test_df, y_test])
 
-    train_df = train_df.reset_index(drop=True)
-    test_df = test_df.reset_index(drop=True)
-
-    return train_df, test_df
+    return X_train_df, X_test_df, y_train_df, y_test_df
 
 def preproc(df, test_size=0.3, random_state=42):
 
@@ -64,7 +69,6 @@ def preproc(df, test_size=0.3, random_state=42):
 
     # # shuffle par target
     # shuffled_df = shuffle_targets(balanced_df)
+    X_train_df, X_test_df, y_train_df, y_test_df = train_test_df(balanced_df, test_size=test_size, random_state=random_state)
 
-    train, test = train_test_df(balanced_df, test_size=test_size, random_state=random_state)
-
-    return train, test
+    return X_train_df, X_test_df, y_train_df, y_test_df
