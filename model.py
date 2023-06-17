@@ -4,6 +4,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import cross_val_score
+import pickle
 
 
 def create_and_fit_model_ml(X_train, y_train):
@@ -62,3 +63,20 @@ def predict_model_ml(model, X_to_predict):
     Retourne une prédiction sur le model
     """
     model.predict(X_to_predict)
+
+
+
+def upload_model(model, name_of_model):
+    with open(f'model.{name_of_model}', 'wb') as file:
+        pickle.dump(model, file)
+
+
+def load_model(name_of_the_model=False):
+    if name_of_the_model == False:
+        with open('model.randomfo', 'rb') as file:
+            loaded_model = pickle.load(file)
+        return loaded_model
+    else:
+        with open(name_of_the_model, 'rb') as file:
+            loaded_model = pickle.load(file)
+        return loaded_model
