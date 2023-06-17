@@ -21,7 +21,6 @@ protobuf
 #our project
 opencv-python
 mediapipe
-pandas_gbq
 
 
 # Trick to install the version of Tensorflow depending on your processor: darwin == Mac, ARM == M1
