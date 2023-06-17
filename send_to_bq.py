@@ -3,13 +3,10 @@ from google.cloud import bigquery
 from google.oauth2 import service_account
 from params import PROJECT_ID, TABLE_ID
 from data_extraction import get_coordinates
-import os
-import shutil
-import glob
+from utils import delete_local_enchantillon
 
-DATA_DIR = './raw_data'
 
-def send_to_bq():
+def upload_data():
     """
         Envoi de notre échantillon de donnée sur Big Query et suppression de notre échantillon local
     """
@@ -22,13 +19,11 @@ def send_to_bq():
     client = bigquery.Client(project=PROJECT_ID, credentials=credentials)
     client.load_table_from_dataframe(df, TABLE_ID)
 
-
-    # Suppression de notre échantillon local
-    files = glob.glob(DATA_DIR)
-    for f in files:
-        if os.path.isfile(f):
-            os.remove(f)
-        elif os.path.isdir(f):
-            shutil.rmtree(f)
-
+    # suppression de notre échantillon local selon volonté user
+    question = input("Veux tu vraiment supprimer ta donnée stockée en local ? Y/n :        ")
+    if question in ["Y", "y"]:
+        delete_local_enchantillon()
+        print("Echantillon local bien supprimé et donnée bien envoyée sur Big Query")
+    else:
+        print("Donnée bien envoyée sur Big Query")
     pass
