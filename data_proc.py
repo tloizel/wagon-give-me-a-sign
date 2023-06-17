@@ -55,6 +55,12 @@ def train_test_df(df, test_size=0.3, random_state=42):
     return X_train_df, X_test_df, y_train_df, y_test_df
 
 def preproc(df, test_size=0.3, random_state=42):
+    """
+    Remove duplicates
+    Remove the first three colmns x_0, y_0, z_0
+    Balance dataset if needed
+    Return X_train_df, X_test_df, y_train_df, y_test_df
+    """
 
     # Remove duplicates
     df = df.drop_duplicates()
