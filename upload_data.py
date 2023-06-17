@@ -2,7 +2,7 @@ import pandas
 from google.cloud import bigquery
 from google.oauth2 import service_account
 from params import PROJECT_ID, TABLE_ID
-from data_extraction import get_coordinates
+from data_extraction import get_coordinates_from_collection
 from utils import delete_local_enchantillon
 
 
@@ -12,7 +12,7 @@ def send_to_bq():
     """
 
     # Envoi de notre échantillon
-    df = get_coordinates()
+    df = get_coordinates_from_collection()
 
     credentials = service_account.Credentials.from_service_account_file("bq_keys.json")
 
