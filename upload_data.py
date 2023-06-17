@@ -6,7 +6,7 @@ from data_extraction import get_coordinates
 from utils import delete_local_enchantillon
 
 
-def upload_data():
+def send_to_bq():
     """
         Envoi de notre échantillon de donnée sur Big Query et suppression de notre échantillon local
     """
@@ -26,4 +26,8 @@ def upload_data():
         print("Echantillon local bien supprimé et donnée bien envoyée sur Big Query")
     else:
         print("Donnée bien envoyée sur Big Query")
+
     pass
+
+
+send_to_bq()

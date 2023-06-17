@@ -14,3 +14,4 @@ def load_from_bq():
     # Submit the query and fetch the results
     df = client.query(query).to_dataframe()
     return df
+
