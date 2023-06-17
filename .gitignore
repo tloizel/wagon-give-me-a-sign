@@ -1,6 +1,6 @@
 raw_data/
 .DS_Store
-notebooks/
 bq_keys.json
 .env
 .envrc
+__pycache__/

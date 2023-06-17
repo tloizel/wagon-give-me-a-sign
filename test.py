@@ -35,9 +35,9 @@ while cap.isOpened():
 
         for hand_landmarks in results.multi_hand_landmarks:
             # Get the coordinates of the thumb_tip landmark
-            thumb_tip_x = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].x
-            thumb_tip_y = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].y
-            thumb_tip_z = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].z
+            thumb_tip_x = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP].x
+            thumb_tip_y = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP].y
+            thumb_tip_z = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP].z
 
             # Get the coordinates of the wrist landmark
             wrist_x = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].x
