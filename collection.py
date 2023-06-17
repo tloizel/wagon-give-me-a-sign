@@ -1,6 +1,7 @@
 import os
 import cv2
 import string
+import uuid
 
 
 DATA_DIR = './raw_data'
@@ -31,7 +32,7 @@ for j in alphabet:
         ret, frame = cap.read()
         cv2.imshow('frame', frame)
         cv2.waitKey(25)
-        cv2.imwrite(os.path.join(DATA_DIR, str(j), '{}.jpg'.format(counter)), frame)
+        cv2.imwrite(os.path.join(DATA_DIR, str(j), '{}.jpg'.format(str(uuid.uuid1()))), frame)
 
         counter += 1
 
