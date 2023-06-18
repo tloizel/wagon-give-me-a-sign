@@ -59,7 +59,8 @@ def get_coordinates_from_collection():
             data.append(coords)
 
     df = pd.DataFrame(data)
-    print(df)
+    return df
+
 
 if __name__ == "__main__":
     get_coordinates_from_collection()
