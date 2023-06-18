@@ -109,8 +109,8 @@ while cap.isOpened():
         #draw rectangle around hand
         x1 = int(min(x_) * W) - 10
         y1 = int(min(y_) * H) - 10
-        x2 = int(max(x_) * W) - 10
-        y2 = int(max(y_) * H) - 10
+        x2 = int(max(x_) * W) + 10
+        y2 = int(max(y_) * H) + 10
         cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 0), 4)
 
         #predict and show prediction
