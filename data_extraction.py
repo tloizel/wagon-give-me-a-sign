@@ -19,13 +19,19 @@ def get_coordinates(image):
     results = hands.process(img_rgb)
 
     coords={}
+
     if results.multi_hand_landmarks:
+        # total_landmarks = sum(len(hand_landmarks.landmark) for hand_landmarks in results.multi_hand_landmarks)
+        # print(total_landmarks)
+
         for hand_landmarks in results.multi_hand_landmarks:
             wrist_x = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].x
             wrist_y = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].y
             wrist_z = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].z
 
+
             for i in range(len(hand_landmarks.landmark)):
+                # same order for everyone
                 x = hand_landmarks.landmark[i].x
                 y = hand_landmarks.landmark[i].y
                 z = hand_landmarks.landmark[i].z
@@ -53,7 +59,7 @@ def get_coordinates_from_collection():
             data.append(coords)
 
     df = pd.DataFrame(data)
-    return df
+    print(df)
 
 if __name__ == "__main__":
     get_coordinates_from_collection()
