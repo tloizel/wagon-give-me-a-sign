@@ -2,6 +2,8 @@ from load_from_bq import load_from_bq
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from data_extraction import get_coordinates
+import ipdb
+
 
 
 df = load_from_bq()
@@ -81,7 +83,11 @@ def preproc(df, test_size=0.3, random_state=42):
     return X_train_df, X_test_df, y_train_df, y_test_df
 
 
-def preproc_predict(image):
-    coords = pd.DataFrame(get_coordinates(image))
-    coords = coords.drop(['x_0','y_0','z_0'], axis=1)
-    return coords
+def preproc_predict(image, processed_hand_dict):
+    coords = get_coordinates(image, processed_hand_dict)
+    if not coords:
+        return None
+    else :
+        coords = pd.DataFrame(coords, index=[0])
+        coords = coords.drop(['x_0','y_0','z_0'], axis=1)
+        return coords
