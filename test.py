@@ -52,8 +52,8 @@ while cap.isOpened():
             y_.append(y)
 
 
-############################### FOR THUMB TEST DATA ############################################
 
+############################### FOR THUMB TEST DATA ############################################
         # Get the coordinates of the thumb_tip landmark
         thumb_tip_x = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP].x
         thumb_tip_y = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP].y
