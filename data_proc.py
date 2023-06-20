@@ -64,8 +64,8 @@ def preproc(df, test_size=0.3, random_state=42):
     """
 
     # Remove duplicates
-    df = df.drop_duplicates()
     df = df.dropna()
+    df = df.drop_duplicates()
 
     # Remove the first three columns
     if 'x_0' in df.columns:
