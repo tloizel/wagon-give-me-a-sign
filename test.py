@@ -125,15 +125,14 @@ while cap.isOpened():
             pred = model.predict(coords_df)
 
             res = 'none' if pred is None else pred
-            print(res)
 
             res = res[0].tolist()
             max_value = max(res)
             max_index = res.index(max_value)
             if max_value>0.90:
-                answer = f"The letter is {ALPHABET[max_index]} at {round(max_value,2)}%"
+                answer = f"{ALPHABET[max_index].capitalize()} ({round(max_value,2)*100}%)"
             else:
-                answer = "None"
+                answer = "No letter"
 
 
 

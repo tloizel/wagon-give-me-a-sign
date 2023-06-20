@@ -85,9 +85,9 @@ def main():
                 max_value = max(res)
                 max_index = res.index(max_value)
                 if max_value>0.90:
-                    answer = f"The letter is {ALPHABET[max_index]} at {round(max_value,2)}%"
+                    answer = f"{ALPHABET[max_index].capitalize()} ({round(max_value,2)*100}%)"
                 else:
-                    answer = "None"
+                    answer = "No letter"
 
 
                 cv2.putText(rgb_image,
