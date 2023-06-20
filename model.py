@@ -1,81 +1,66 @@
 import pandas as pd
-from sklearn.model_selection import GridSearchCV
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
-from sklearn.model_selection import cross_val_score
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout, LSTM
+from sklearn.preprocessing import LabelEncoder
+from tensorflow.keras.callbacks import EarlyStopping
 import pickle
-from sklearn import svm
-from sklearn.model_selection import GridSearchCV, cross_val_score
+from tensorflow.keras.regularizers import l2
+from tensorflow.keras.utils import to_categorical
 
-def create_and_fit_model_ml(X_train, y_train):
+import numpy as np
+# séparation des données
+
+
+def create_and_fit_model_ml(X_train, y_train, timesteps=10):
 
     """
-    Créer et entrainer le model de Machine learning (ici un Random Forest Classifier)
+    Créer et entrainer le model de Machine learning (ici un LSTM)
     """
 
-    # Créez une instance du classificateur
-#    clf = RandomForestClassifier()
+    #X_train = np.reshape(X_train, (X_train.shape[0], timesteps, X_train.shape[1] // timesteps))
+
+
+    #early_stopping = EarlyStopping(monitor='val_loss', patience=10)
+    ## Convertir les données
+    #X_train = X_train.values.reshape((X_train.shape[0], X_train.shape[1], 1)) # Reshape to (n_samples, n_timesteps, n_features)
 #
-#    # Définissez la grille de paramètres que vous souhaitez explorer
-#    param_grid = {
-#        'n_estimators': [50, 100, 200, 1000],
-#        'max_depth': [None, 10, 20, 30, 50],
-#        'min_samples_split': [2, 5, 10, 30]
-#    }
+    ## Encoder les labels
+    #encoder = LabelEncoder()
+    #y_train = encoder.fit_transform(y_train.squeeze()) # Convertir les lettres en chiffres
+    #y_train = to_categorical(y_train) # Convertir en one-hot vectors
 #
-#    # Créez une instance de GridSearchCV
-#    grid_search = GridSearchCV(estimator=clf, param_grid=param_grid, cv=10, scoring='accuracy', verbose=3, n_jobs=-1)
+    ## Créer le modèle
+    #model = Sequential()
+    #model.add(LSTM(64, activation='relu', return_sequences=True, input_shape=(X_train.shape[1], 1)))
+    #model.add(Dropout(0.5))
+    #model.add(LSTM(64, activation='relu'))
+    #model.add(Dropout(0.5))
+    #model.add(Dense(y_train.shape[1], activation='softmax')) # y_train.shape[1] correspond au nombre de classes
 #
-#    # Entraînez le GridSearchCV pour trouver les meilleurs paramètres
-#    grid_search.fit(X_train, y_train)
+    ## Compiler le modèle
+    #model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 #
-#    # Affichez les meilleurs paramètres trouvés par la recherche sur grille
-#    print("Best parameters found: ", grid_search.best_params_)
-#
-#
-#
-#
-#    # Utilisez le meilleur modèle pour faire des prédictions
-#    best_ = grid_search.best_estimator_
-#
+    ## Entraîner le modèle
+    #model.fit(X_train, y_train, epochs=100, validation_split=0.2, callbacks=[early_stopping])
+    encoder= LabelEncoder()
+    y_train = encoder.fit_transform(y_train)
+    early_stopping = EarlyStopping(monitor='val_loss', patience=10)
+    # définir le modèle
+    model = Sequential()
+    model.add(Dense(128, input_dim=X_train.shape[1], activation='relu'))
+    model.add(Dense(256, activation='relu'))
+    model.add(Dropout(0.2))
+    model.add(Dense(64, activation='relu'))
+    model.add(Dropout(0.3))
+    model.add(Dense(len(set(y_train)), activation='softmax'))
 
-    # Définir le modèle SVM
-    svc = svm.SVC()
+    # compiler le modèle
+    model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    # Définir la grille des hyperparamètres à optimiser
-    param_grid = {'C': [0.1, 1,2,5,7, 10, 100, 1000, 5000, 10000, 50000], 'gamma': [1, 0.1, 0.01,0.07, 0.05, 0.001], 'kernel': ['rbf', 'poly', 'sigmoid']}
+    # former le modèle
+    model.fit(X_train, y_train, epochs=1000, batch_size=16, validation_split=0.30, callbacks=[early_stopping])
+    return model
 
-    # Créer la recherche sur grille
-    grid = GridSearchCV(svc, param_grid, refit=True, verbose=2, cv=20)
-
-    # Adapter la recherche sur grille aux données
-    grid.fit(X_train, y_train.values.ravel())
-
-    # Imprimer les meilleurs paramètres trouvés
-    print(grid.best_params_)
-
-    # Utiliser le meilleur modèle pour effectuer la validation croisée
-    best_ = grid.best_estimator_
-    return best_
-
-
-def evaluate_model_ml_crossval(model, X, y, cv=5):
-    """
-    Evaluer le model de Machine learning avec méthode de cross vall et CV de 5
-    """
-    scores = cross_val_score(model, X, y.values.ravel(), cv=cv)
-
-    print("Scores de validation croisée : ", scores)
-    print("Moyenne des scores de validation croisée : ", scores.mean())
-    return scores.mean()
-
-
-def evaluate_model_ml_accuracy(model, X_test, y_test):
-    """
-    Evalue l'accuracy du model
-    """
-    return accuracy_score(X_test, y_test.values.ravel())
 
 
 def predict_model_ml(model, X_to_predict):
@@ -87,7 +72,7 @@ def predict_model_ml(model, X_to_predict):
 
 
 def upload_model(model, name_of_model):
-    with open(f'model.{name_of_model}', 'wb') as file:
+    with open(f'models/model.{name_of_model}', 'wb') as file:
         pickle.dump(model, file)
 
 
