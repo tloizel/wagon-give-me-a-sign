@@ -4,6 +4,9 @@ import mediapipe as mp
 from model import load_model, predict_model_ml
 import pandas as pd
 from data_proc import preproc_predict
+from tensorflow.keras.models import load_model
+import string
+ALPHABET = list(string.ascii_lowercase)
 
 st.markdown("""# Give me a sign
 """)
@@ -12,7 +15,7 @@ st.markdown("""# Give me a sign
 def main():
 
     #load model
-    model = load_model()
+    model = load_model('models/lstm_1')
 
     # Initialise MediaPipe Hands
     mp_hands = mp.solutions.hands
@@ -74,10 +77,21 @@ def main():
             if coords_df is None:
                 pass
             else:
-                pred = predict_model_ml(model, coords_df)
+                pred = model.predict(coords_df)
+
                 res = 'none' if pred is None else pred
+
+                res = res[0].tolist()
+                max_value = max(res)
+                max_index = res.index(max_value)
+                if max_value>0.90:
+                    answer = f"The letter is {ALPHABET[max_index]} at {round(max_value,2)}%"
+                else:
+                    answer = "None"
+
+
                 cv2.putText(rgb_image,
-                            res[0],
+                            answer,
                             (x1, y1 - 10),
                             cv2.FONT_HERSHEY_SIMPLEX,
                             1.3,
@@ -86,8 +100,8 @@ def main():
                             cv2.LINE_AA)
 
 
-            # Display the frame in Streamlit
-            video_placeholder.image(rgb_image, channels="RGB")
+        # Display the frame in Streamlit
+        video_placeholder.image(rgb_image, channels="RGB")
         # # Affiche l'image
         # cv2.imshow('Hand Tracking', frame)
 
