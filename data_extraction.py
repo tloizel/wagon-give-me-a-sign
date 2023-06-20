@@ -3,20 +3,30 @@ import mediapipe as mp
 import cv2
 import matplotlib.pyplot as plt
 import pandas as pd
+import ipdb
+import numpy as np
 
 
-def get_coordinates(image):
+def get_coordinates(image, processed_hand_dict=None):
     """
     Récupère toutes les coords de la main d'une image et stocke dans un dictionnaire
+    possible de passer le path d'une image ou alors les résultats d'une main déjà processé, pour alléger le code
+    Sinon problème de mémoire.
+    dict : {'mp_hands': mp_hands, 'hands': hands, 'results': results}
     """
-    mp_hands = mp.solutions.hands
-    hands = mp_hands.Hands(static_image_mode=True, min_detection_confidence=0.3)
+    if processed_hand_dict is not None:
+        #from frame
+        mp_hands = processed_hand_dict['mp_hands']
+        hands = processed_hand_dict['hands']
+        results = processed_hand_dict['results']
+    else:
+        #from path, for collection
+        img = cv2.imread(image)
+        img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-    img = cv2.imread(image)
-
-    img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-
-    results = hands.process(img_rgb)
+        mp_hands = mp.solutions.hands
+        hands = mp_hands.Hands(static_image_mode=True, min_detection_confidence=0.3)
+        results = hands.process(img_rgb)
 
     coords={}
 

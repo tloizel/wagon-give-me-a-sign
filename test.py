@@ -1,6 +1,13 @@
 import cv2
 import mediapipe as mp
+from model import load_model, predict_model_ml
+import pandas as pd
+from data_proc import preproc_predict
+import ipdb
 
+
+#load model
+model = load_model()
 
 # Initialise MediaPipe Hands
 mp_hands = mp.solutions.hands
@@ -14,7 +21,9 @@ mp_draw = mp.solutions.drawing_utils
 # Ouvre la webcam
 cap = cv2.VideoCapture(0)
 
+
 while cap.isOpened():
+
     ret, frame = cap.read()
 
     # Convertit l'image en RGB pour MediaPipe Hands
@@ -32,54 +41,92 @@ while cap.isOpened():
                                    mp.solutions.drawing_styles.get_default_hand_landmarks_style(),
                                    mp.solutions.drawing_styles.get_default_hand_connections_style())
 
+        #for rectangle later
+        H, W, _ = frame.shape
+        x_ = []
+        y_ = []
+        for i in range(len(hand_landmarks.landmark)):
+            x = hand_landmarks.landmark[i].x
+            y = hand_landmarks.landmark[i].y
+            x_.append(x)
+            y_.append(y)
 
-        for hand_landmarks in results.multi_hand_landmarks:
-            # Get the coordinates of the thumb_tip landmark
-            thumb_tip_x = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP].x
-            thumb_tip_y = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP].y
-            thumb_tip_z = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP].z
 
-            # Get the coordinates of the wrist landmark
-            wrist_x = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].x
-            wrist_y = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].y
-            wrist_z = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].z
+############################### FOR THUMB TEST DATA ############################################
 
-            # Use the absolute coordinates
-            c_a = 50
-            for i in ["Absolute", ["X", thumb_tip_x],["Y", thumb_tip_y], ["Z", thumb_tip_z]]:
+        # Get the coordinates of the thumb_tip landmark
+        thumb_tip_x = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP].x
+        thumb_tip_y = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP].y
+        thumb_tip_z = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP].z
 
-                if isinstance(i,str):
-                    print_ = i
-                else:
-                    print_ =  f"{i[0]} : {round(i[1],2)}"
+        # Get the coordinates of the wrist landmark
+        wrist_x = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].x
+        wrist_y = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].y
+        wrist_z = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].z
 
-                cv2.putText(frame,
-                            print_,
-                            (100, c_a),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            1.3,
-                            (0, 255, 0),
-                            3,
-                            cv2.LINE_AA)
-                c_a+=50
 
-            c_r = 50
-            for i in ["Relative", ["X", thumb_tip_x - wrist_x],["Y", thumb_tip_y - wrist_y], ["Z", thumb_tip_z - wrist_z]]:
+        # Use the absolute coordinates
+        c_a = 50
+        for i in ["Absolute", ["X", thumb_tip_x],["Y", thumb_tip_y], ["Z", thumb_tip_z]]:
 
-                if isinstance(i,str):
-                    print_ = i
-                else:
-                    print_ =  f"{i[0]}: {round(i[1],2)}"
+            if isinstance(i,str):
+                print_ = i
+            else:
+                print_ =  f"{i[0]} : {round(i[1],2)}"
 
-                cv2.putText(frame,
-                            print_,
-                            (500, c_r),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            1.3,
-                            (0, 255, 0),
-                            3,
-                            cv2.LINE_AA)
-                c_r+=50
+            cv2.putText(frame,
+                        print_,
+                        (100, c_a),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        1.3,
+                        (0, 255, 0),
+                        3,
+                        cv2.LINE_AA)
+            c_a+=50
+
+        # Use the relative coordinates
+        c_r = 50
+        for i in ["Relative", ["X", thumb_tip_x - wrist_x],["Y", thumb_tip_y - wrist_y], ["Z", thumb_tip_z - wrist_z]]:
+
+            if isinstance(i,str):
+                print_ = i
+            else:
+                print_ =  f"{i[0]}: {round(i[1],2)}"
+
+            cv2.putText(frame,
+                        print_,
+                        (500, c_r),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        1.3,
+                        (0, 255, 0),
+                        3,
+                        cv2.LINE_AA)
+            c_r+=50
+###########################################################################
+
+
+
+        #draw rectangle around hand
+        x1 = int(min(x_) * W) - 10
+        y1 = int(min(y_) * H) - 10
+        x2 = int(max(x_) * W) + 10
+        y2 = int(max(y_) * H) + 10
+        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 0), 4)
+
+        #predict and show prediction
+        coords_df = preproc_predict(rgb_image, {'mp_hands': mp_hands, 'hands': hands, 'results': results})
+        if coords_df is None:
+            pass
+        else:
+            pred = predict_model_ml(model, coords_df)
+            cv2.putText(frame,
+                        'none' if pred is None else pred,
+                        (x1, y1 - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        1.3,
+                        (0, 0, 0),
+                        3,
+                        cv2.LINE_AA)
 
 
 
@@ -87,9 +134,10 @@ while cap.isOpened():
     cv2.imshow('Hand Tracking', frame)
 
     # Sortir de la boucle si 'q' est appuyé
-    if cv2.waitKey(10) & 0xFF == ord('q'):
+    if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
+
 # Libère la webcam et ferme les fenêtres d'affichage
-#cap.release()
-#cv2.destroyAllWindows()
+cap.release()
+cv2.destroyAllWindows()

@@ -13,7 +13,7 @@ def collection():
         os.makedirs(DATA_DIR)
 
     alphabet = list(string.ascii_lowercase)
-    dataset_size = 200 #each of us should do 100, 400 in total per letter
+    dataset_size = 10 #each of us should do 100, 400 in total per letter
 
     cap = cv2.VideoCapture(0)
     for j in alphabet:
@@ -43,3 +43,6 @@ def collection():
     cap.release()
     cv2.destroyAllWindows()
     pass
+
+if __name__ == "__main__":
+    collection()
