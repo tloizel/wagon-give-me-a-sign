@@ -82,7 +82,7 @@ def predict_model_ml(model, X_to_predict):
     """
     Retourne une prédiction sur le model
     """
-    model.predict(X_to_predict)
+    return model.predict(X_to_predict)
 
 
 
@@ -93,10 +93,10 @@ def upload_model(model, name_of_model):
 
 def load_model(name_of_the_model=False):
     if name_of_the_model == False:
-        with open('model.randomfo', 'rb') as file:
+        with open('models/model.randomfo', 'rb') as file:
             loaded_model = pickle.load(file)
         return loaded_model
     else:
-        with open(name_of_the_model, 'rb') as file:
+        with open(f'models/{name_of_the_model}', 'rb') as file:
             loaded_model = pickle.load(file)
         return loaded_model
