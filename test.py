@@ -119,8 +119,9 @@ while cap.isOpened():
             pass
         else:
             pred = predict_model_ml(model, coords_df)
+            res = 'none' if pred is None else pred
             cv2.putText(frame,
-                        'none' if pred is None else pred,
+                        res[0],
                         (x1, y1 - 10),
                         cv2.FONT_HERSHEY_SIMPLEX,
                         1.3,
