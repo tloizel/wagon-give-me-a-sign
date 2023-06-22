@@ -134,6 +134,7 @@ while cap.isOpened():
             else:
                 answer = "No letter"
 
+
             cv2.putText(frame,
                         answer,
                         (x1, y1 - 10),
