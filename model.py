@@ -237,22 +237,11 @@ def create_and_fit_model_ml(X_train, y_train, timesteps=10):
 
     return best_clf
 
-
-
-
-
-
 def predict_model_ml(model, X_to_predict):
     """
     Retourne une prédiction sur le model
     """
     return model.predict(X_to_predict)
-
-
-
-def upload_model_ml(model, name_of_model):
-    with open(f'models/model.{name_of_model}', 'wb') as file:
-        pickle.dump(model, file)
 
 
 def load_model_ml(name_of_the_model=False):
