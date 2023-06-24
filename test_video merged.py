@@ -1,16 +1,21 @@
 import cv2
 import mediapipe as mp
-from model import load_model_ml
+#from model import load_model, predict_model_ml
 import pandas as pd
 from data_proc import preproc_predict
+from model import load_model, predict_model_ml
+import numpy as np
 import ipdb
-from tensorflow.keras.models import load_model
+#from tensorflow.keras.models import load_model
 import string
 ALPHABET = list(string.ascii_lowercase)
+import tensorflow as tf
+tf.config.run_functions_eagerly(True)
 
-model = load_model_ml('model.random_forest_1')
+model = tf.keras.models.load_model('models/LSTM_2')
 
 #load model
+image_sequence = []
 
 # Initialise MediaPipe Hands
 mp_hands = mp.solutions.hands
@@ -121,19 +126,42 @@ while cap.isOpened():
         if coords_df is None:
             pass
         else:
+            image_sequence.append(coords_df)
 
-            pred = model.predict_proba(coords_df)
+            if len(image_sequence) < 1:
+                continue  # Not enough data yet, get next image
+            elif len(image_sequence) > 1:
+                image_sequence.pop(0)  # Remove oldest image if we have more than 30
 
-            res = 'none' if pred is None else pred
-            print(res)
+            coords_df = pd.concat(image_sequence)
+            print(coords_df)
+            n_timesteps = 1
+            n_features = coords_df.shape[1]
 
-            res = res[0].tolist()
-            max_value = max(res)
-            max_index = res.index(max_value)
-            #if max_value>0.80:
-            answer = f"{ALPHABET[max_index].capitalize()} ({round(max_value,2)*100}%)"
-            #else:
-             #   answer = "No letter"
+            n_samples_new = np.floor(coords_df.shape[0] / n_timesteps).astype(int)
+
+            # Make sure the number of rows in coords_df is a multiple of n_timesteps
+            coords_df = coords_df.iloc[:n_samples_new*n_timesteps]
+            X_new = np.resize(coords_df, (n_samples_new*n_timesteps, n_features))
+            X_new_lstm = X_new.reshape(n_samples_new, n_timesteps, n_features)
+
+            if X_new_lstm.size > 0:
+                pred = model.predict(X_new_lstm, verbose=0)
+                res = pred[0].tolist()
+                for prob_array in res:
+                    max_value_index = np.argmax(prob_array)
+                    max_probability = prob_array[max_value_index]
+                    predicted_letter = ALPHABET[max_value_index]
+
+                    answer = f"The letter is {predicted_letter} at {round(max_probability,2)}%"
+                #max_value = max(res)
+                #max_index = res.index(max_value)
+                #if max_value>0.90:
+                #    answer = f"The letter is {ALPHABET[max_index]} at {round(max_value,2)}%"
+                #else:
+                #    answer = "None"
+            else:
+                answer = "nothinng, model pété"
 
 
             cv2.putText(frame,

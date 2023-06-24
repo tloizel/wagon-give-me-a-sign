@@ -60,11 +60,22 @@ def get_coordinates_from_collection():
     """
     DATA_DIR = './raw_data'
 
+    mp_hands = mp.solutions.hands
+    hands = mp_hands.Hands(static_image_mode=False,
+                        max_num_hands=1,
+                        min_detection_confidence=0.7)
+
     data = []
     for dir_ in os.listdir(DATA_DIR):
         for img_path in os.listdir(os.path.join(DATA_DIR, dir_)):
             img = os.path.join(DATA_DIR, dir_, img_path)
-            coords = get_coordinates(img)
+
+            image = cv2.imread(img)
+            rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            # Fait passer l'image à travers le modèle
+            results = hands.process(rgb_image)
+
+            coords = get_coordinates(img, {'mp_hands': mp_hands, 'hands': hands, 'results': results})
             coords['target']=dir_
             data.append(coords)
 

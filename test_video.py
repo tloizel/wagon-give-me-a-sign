@@ -128,33 +128,30 @@ while cap.isOpened():
         else:
             image_sequence.append(coords_df)
 
-            if len(image_sequence) < 7:
+            if len(image_sequence) < 30:
                 continue  # Not enough data yet, get next image
-            elif len(image_sequence) > 7:
+            elif len(image_sequence) > 30:
                 image_sequence.pop(0)  # Remove oldest image if we have more than 30
 
             coords_df = pd.concat(image_sequence)
-            print(coords_df)
-            n_timesteps = 7
+            n_timesteps = 30
             n_features = coords_df.shape[1]
 
             n_samples_new = np.floor(coords_df.shape[0] / n_timesteps).astype(int)
 
             # Make sure the number of rows in coords_df is a multiple of n_timesteps
             coords_df = coords_df.iloc[:n_samples_new*n_timesteps]
-            print(coords_df)
             X_new = np.resize(coords_df, (n_samples_new*n_timesteps, n_features))
             X_new_lstm = X_new.reshape(n_samples_new, n_timesteps, n_features)
-            print(f"n_samples_new: {n_samples_new}, n_timesteps: {n_timesteps}, n_features: {n_features}")
 
             if X_new_lstm.size > 0:
-                pred = model.predict(X_new_lstm)
+                pred = model.predict(X_new_lstm, verbose=0)
                 res = pred[0].tolist()
                 for prob_array in res:
                     max_value_index = np.argmax(prob_array)
                     max_probability = prob_array[max_value_index]
                     predicted_letter = ALPHABET[max_value_index]
-                    print(predicted_letter)
+
                     answer = f"The letter is {predicted_letter} at {round(max_probability,2)}%"
                 #max_value = max(res)
                 #max_index = res.index(max_value)
