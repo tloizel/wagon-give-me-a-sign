@@ -1,9 +1,9 @@
-import pandas
 from google.cloud import bigquery
 from google.oauth2 import service_account
 from params import PROJECT_ID, TABLE_ID
 from data_extraction import get_coordinates_from_collection
 from utils import delete_local_enchantillon
+import tensorflow as tf
 
 
 def send_to_bq():
@@ -11,12 +11,14 @@ def send_to_bq():
         Envoi de notre échantillon de donnée sur Big Query et suppression de notre échantillon local
     """
 
+
     # Envoi de notre échantillon
     df = get_coordinates_from_collection()
-
+    print("1")
     credentials = service_account.Credentials.from_service_account_file("bq_keys.json")
 
     client = bigquery.Client(project=PROJECT_ID, credentials=credentials)
+    print("2")
     client.load_table_from_dataframe(df, TABLE_ID)
 
     # suppression de notre échantillon local selon volonté user
