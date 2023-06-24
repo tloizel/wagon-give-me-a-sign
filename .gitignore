@@ -4,4 +4,5 @@ bq_keys.json
 .env
 .envrc
 __pycache__/*
-csv
+models/
+notebooks/
