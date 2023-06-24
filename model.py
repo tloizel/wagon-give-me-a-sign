@@ -92,12 +92,6 @@ def predict_model_ml(model, X_to_predict):
     return model.predict(X_to_predict)
 
 
-
-def upload_model(model, name_of_model):
-    with open(f'models/model.{name_of_model}', 'wb') as file:
-        pickle.dump(model, file)
-
-
 def load_model(name_of_the_model=False):
     if name_of_the_model == False:
         with open('models/model.randomfo', 'rb') as file:
