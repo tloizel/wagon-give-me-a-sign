@@ -29,5 +29,5 @@ def send_to_bq():
 
     pass
 
-
-send_to_bq()
+if __name__ == "__main__":
+    send_to_bq()
