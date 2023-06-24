@@ -4,7 +4,7 @@ import mediapipe as mp
 from model import load_model, predict_model_ml
 import pandas as pd
 from data_proc import preproc_predict
-from tensorflow.keras.models import load_model
+#from tensorflow.keras.models import load_model
 import string
 ALPHABET = list(string.ascii_lowercase)
 
@@ -15,8 +15,7 @@ st.markdown("""# Give me a sign
 def main():
 
     #load model
-    model = load_model('models/lstm_1')
-
+    model = load_model('models/dense_1')
     # Initialise MediaPipe Hands
     mp_hands = mp.solutions.hands
     hands = mp_hands.Hands(static_image_mode=False,
@@ -84,8 +83,10 @@ def main():
                 res = res[0].tolist()
                 max_value = max(res)
                 max_index = res.index(max_value)
+
                 if max_value>0.90:
                     answer = f"{ALPHABET[max_index].capitalize()} ({round(max_value,2)*100}%)"
+
                 else:
                     answer = "No letter"
 
