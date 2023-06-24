@@ -1,10 +1,9 @@
 import pandas as pd
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, Dropout, Conv1D, MaxPooling1D, Flatten, Bidirectional, GlobalMaxPooling1D, Reshape, RepeatVector,Lambda,TimeDistributed
+from tensorflow.keras.layers import LSTM, Dense, Dropout, Conv1D, MaxPooling1D, Flatten, Bidirectional, RepeatVector
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.callbacks import EarlyStopping
 import pickle
-from tensorflow.keras.regularizers import l2
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
@@ -17,47 +16,29 @@ import numpy as np
 from keras.layers import BatchNormalization, LeakyReLU
 
 def create_and_fit_model_merged_bi(X_train, y_train, timesteps=10):
-
-    """
-    Créer et entrainer le model de Machine learning (ici un LSTM)
-    """
     unique_labels, counts = np.unique(y_train, return_counts=True)
     for label, count in zip(unique_labels, counts):
         print(f"Label {label}: {count} examples")
 
-
     le = LabelEncoder()
     num_classes = len(np.unique(y_train))
 
-    early_stopping = EarlyStopping(monitor='val_loss', patience=15)
+    early_stopping = EarlyStopping(monitor='val_loss', patience=35, restore_best_weights=True)
     n_features = X_train.shape[1]
 
-
-    n_timesteps = 30
+    n_timesteps = 5
     n_samples_train = np.floor(X_train.shape[0] / n_timesteps).astype(int)
     X_train = np.resize(X_train, (n_samples_train*n_timesteps, n_features))
     X_train_lstm = X_train.reshape(n_samples_train, n_timesteps, n_features)
 
-    # Reshaping y_train to match X_train
-    # Fit the label encoder on the y_train data
     le.fit(y_train)
     y_train_encoded = le.fit_transform(y_train.values.ravel())
 
-    # Transform y_train to corresponding encoded labels
-
-    # Reshape y_train_encoded to match the (samples, timesteps) structure
     y_train_encoded = np.resize(y_train_encoded, (n_samples_train*n_timesteps,))
-
-    # Convert the encoded y_train data to categorical format
     y_train_encoded = to_categorical(y_train_encoded, num_classes)
-
-    # Finally, reshape y_train_encoded to be 3D to match X_train_lstm
-    # The last dimension should be the number of classes
     y_train_encoded = y_train_encoded.reshape(n_samples_train, n_timesteps, num_classes)
 
-
-
-
+    print(y_train_encoded)
     # Modèle CNN
     cnn_model = Sequential()
     cnn_model.add(Conv1D(64, 3, activation='relu', input_shape=(n_timesteps, n_features)))
@@ -65,25 +46,28 @@ def create_and_fit_model_merged_bi(X_train, y_train, timesteps=10):
     cnn_model.add(Conv1D(128, 3, activation='relu'))
     cnn_model.add(MaxPooling1D(2))
     cnn_model.add(Flatten())
-    cnn_model.add(Dense(128, activation='relu'))
+    cnn_model.add(RepeatVector(n_timesteps))
 
-    bi_lstm_model = Sequential()
-    bi_lstm_model.add(Bidirectional(LSTM(100, return_sequences=True), input_shape=(n_timesteps, n_features)))
-    bi_lstm_model.add(Dropout(0.2))
-    bi_lstm_model.add(Dense(100, activation='relu'))
-    bi_lstm_model.add(Dropout(0.2))
+    # Modèle Bi-LSTM
+    lstm_model = Sequential()
+    lstm_model.add(Bidirectional(LSTM(100, return_sequences=True), input_shape=(n_timesteps, n_features)))
+    lstm_model.add(Dropout(0.2))
 
-    # Fusion des modèles
-    merged_model = Sequential()
-    merged_model.add(tf.keras.layers.Concatenate([cnn_model, bi_lstm_model]))
-    merged_model.add(Dense(num_classes, activation='softmax'))
+    # Merge models
+    merged_output = Concatenate()([cnn_model.output, lstm_model.output])
 
-    # Compilation du modèle
+    # Add fully connected layer and output layer
+    merged_output = Dense(128, activation='relu')(merged_output)
+    output = Dense(num_classes, activation='softmax')(merged_output)
+
+    # Create the model
+    merged_model = Model(inputs=[cnn_model.input, lstm_model.input], outputs=output)
+
+
     optimizer = Adam(learning_rate=0.001)
-    merged_model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+    merged_model.compile(loss='categorical_crossentropy', optimizer="adam", metrics=['accuracy'])
 
-    # Entraînement du modèle
-    merged_model.fit(X_train, y_train, validation_split=0.30, callbacks=[early_stopping], epochs=100, verbose=1)
+    merged_model.fit([X_train_lstm, X_train_lstm], y_train_encoded, validation_split=0.30, callbacks=[early_stopping], epochs=100, verbose=1)
 
     return merged_model
 
@@ -108,11 +92,11 @@ def create_and_fit_model_merged(X_train, y_train, timesteps=10):
     early_stopping = EarlyStopping(monitor='val_loss', patience=15)
     n_features = X_train.shape[1]
 
-    n_timesteps = 30
+    n_timesteps = 5
     n_samples_train = np.floor(X_train.shape[0] / n_timesteps).astype(int)
     X_train = np.resize(X_train, (n_samples_train*n_timesteps, n_features))
     X_train_lstm = X_train.reshape(n_samples_train, n_timesteps, n_features)
-
+    y_train = y_train.values.ravel()
     le.fit(y_train)
     y_train_encoded = le.fit_transform(y_train.values.ravel())
 
@@ -121,28 +105,30 @@ def create_and_fit_model_merged(X_train, y_train, timesteps=10):
     y_train_encoded = y_train_encoded.reshape(n_samples_train, n_timesteps, num_classes)
 
     # Modèle CNN
+    # Modèle CNN
     cnn_model = Sequential()
     cnn_model.add(Conv1D(64, 3, activation='relu', input_shape=(n_timesteps, n_features)))
     cnn_model.add(MaxPooling1D(2))
     cnn_model.add(Conv1D(128, 3, activation='relu'))
     cnn_model.add(MaxPooling1D(2))
-    cnn_model.add(Conv1D(100, 3, activation='relu', padding='same'))
-    cnn_model.add(MaxPooling1D(5)) # add another pooling layer to match the LSTM output shape
-
+    cnn_model.add(Flatten())
+    cnn_model.add(RepeatVector(n_timesteps))
 
     # Modèle LSTM
     lstm_model = Sequential()
-    lstm_model.add(LSTM(100, input_shape=(n_timesteps, n_features), return_sequences=True)) # return sequences
+    lstm_model.add(LSTM(100, input_shape=(n_timesteps, n_features), return_sequences=True))
     lstm_model.add(Dropout(0.2))
 
     # Merge models
     merged_output = Concatenate()([cnn_model.output, lstm_model.output])
 
     # Add fully connected layer and output layer
-    merged_output = TimeDistributed(Dense(128, activation='relu'))(merged_output) # Add TimeDistributed wrapper
-    output = TimeDistributed(Dense(num_classes, activation='softmax'))(merged_output) # Add TimeDistributed wrapper
+    merged_output = Dense(128, activation='relu')(merged_output)
+    output = Dense(num_classes, activation='softmax')(merged_output)
 
+    # Create the model
     merged_model = Model(inputs=[cnn_model.input, lstm_model.input], outputs=output)
+
 
     optimizer = Adam(learning_rate=0.001)
     merged_model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])

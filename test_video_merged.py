@@ -3,7 +3,7 @@ import mediapipe as mp
 #from model import load_model, predict_model_ml
 import pandas as pd
 from data_proc import preproc_predict
-from model import load_model, predict_model_ml
+from model import predict_model_ml
 import numpy as np
 import ipdb
 #from tensorflow.keras.models import load_model
@@ -12,8 +12,8 @@ ALPHABET = list(string.ascii_lowercase)
 import tensorflow as tf
 tf.config.run_functions_eagerly(True)
 
-model = tf.keras.models.load_model('models/LSTM_2')
-
+model = tf.keras.models.load_model('models/model_deep_merged')
+SEQUENCE_LENGTH = 10
 #load model
 image_sequence = []
 
@@ -128,14 +128,14 @@ while cap.isOpened():
         else:
             image_sequence.append(coords_df)
 
-            if len(image_sequence) < 1:
+            if len(image_sequence) < SEQUENCE_LENGTH:
                 continue  # Not enough data yet, get next image
-            elif len(image_sequence) > 1:
+            elif len(image_sequence) > SEQUENCE_LENGTH:
                 image_sequence.pop(0)  # Remove oldest image if we have more than 30
 
             coords_df = pd.concat(image_sequence)
             print(coords_df)
-            n_timesteps = 1
+            n_timesteps = SEQUENCE_LENGTH
             n_features = coords_df.shape[1]
 
             n_samples_new = np.floor(coords_df.shape[0] / n_timesteps).astype(int)
@@ -146,7 +146,7 @@ while cap.isOpened():
             X_new_lstm = X_new.reshape(n_samples_new, n_timesteps, n_features)
 
             if X_new_lstm.size > 0:
-                pred = model.predict(X_new_lstm, verbose=0)
+                pred = model.predict([X_new_lstm, X_new_lstm], verbose=0)
                 res = pred[0].tolist()
                 for prob_array in res:
                     max_value_index = np.argmax(prob_array)
