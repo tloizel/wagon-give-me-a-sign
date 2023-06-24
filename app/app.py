@@ -63,7 +63,6 @@ def process(image):
         if coords_df is None:
             pass
         else:
-            ipdb.set_trace()
             pred = model.predict_proba(coords_df)
 
             res = 'none' if pred is None else pred
