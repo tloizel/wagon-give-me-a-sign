@@ -8,7 +8,7 @@ df = load_from_bq()
 X_train_df, X_test_df, y_train_df, y_test_df = preproc(df, test_size=0.3, random_state=42)
 
 
-model = create_and_fit_model_ml(X_train_df, y_train_df)
+#model = create_and_fit_model_ml(X_train_df, y_train_df)
 
 #model.save('models/LSTM_2')
 
@@ -19,12 +19,12 @@ model = create_and_fit_model_ml(X_train_df, y_train_df)
 model_deep_merged = create_and_fit_model_merged(X_train_df, y_train_df)
 
 
-model_deep_merged_bi = create_and_fit_model_merged_bi(X_train_df, y_train_df)
+#model_deep_merged_bi = create_and_fit_model_merged_bi(X_train_df, y_train_df)
 
 
-model.save('models/model_deep_merged')
+model_deep_merged.save('models/model_deep_merged')
 
-model.save('models/model_deep_merged_bi')
+#model_deep_merged_bi.save('models/model_deep_merged_bi')
 
 
 
