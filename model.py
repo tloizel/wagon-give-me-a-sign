@@ -11,9 +11,95 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras import Model
 import tensorflow as tf
 from keras.layers import Concatenate
-
+import xgboost as xgb
+from sklearn.model_selection import GridSearchCV
+import pandas as pd
+from sklearn.model_selection import GridSearchCV
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 import numpy as np
 from keras.layers import BatchNormalization, LeakyReLU
+import tensorflow as tf
+import tensorflow_text as text
+from tensorflow.keras.layers import MultiHeadAttention, Dropout, LayerNormalization, Dense, Flatten, Input
+from tensorflow.keras.models import Model
+
+
+
+def transformer_block(embed_dim, num_heads, ff_dim, rate=0.1):
+    inputs = Input(shape=(None, embed_dim))
+    attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=embed_dim)(inputs, inputs)
+    attn_output = Dropout(rate)(attn_output)
+    out1 = LayerNormalization(epsilon=1e-6)(inputs + attn_output)
+    ffn_output = Dense(ff_dim, activation="relu")(out1)
+    ffn_output = Dense(embed_dim)(ffn_output)
+    ffn_output = Dropout(rate)(ffn_output)
+    return Model(inputs=inputs, outputs=LayerNormalization(epsilon=1e-6)(out1 + ffn_output))
+
+
+
+def create_and_fit_model_merged_transformer(X_train, y_train, timesteps=10):
+    unique_labels, counts = np.unique(y_train, return_counts=True)
+    for label, count in zip(unique_labels, counts):
+        print(f"Label {label}: {count} examples")
+
+    le = LabelEncoder()
+    num_classes = len(np.unique(y_train))
+
+    early_stopping = EarlyStopping(monitor='val_loss', patience=35, restore_best_weights=True)
+    n_features = X_train.shape[1]
+
+    n_timesteps = 10
+    n_samples_train = np.floor(X_train.shape[0] / n_timesteps).astype(int)
+    X_train = np.resize(X_train, (n_samples_train*n_timesteps, n_features))
+    X_train_lstm = X_train.reshape(n_samples_train, n_timesteps, n_features)
+
+    le.fit(y_train)
+    y_train_encoded = le.fit_transform(y_train.values.ravel())
+
+    y_train_encoded = np.resize(y_train_encoded, (n_samples_train*n_timesteps,))
+    y_train_encoded = to_categorical(y_train_encoded, num_classes)
+    y_train_encoded = y_train_encoded.reshape(n_samples_train, n_timesteps, num_classes)
+
+
+    # Modèle CNN
+    embed_dim = 32  # This can be adjusted depending on your needs
+    num_heads = 2  # Number of attention heads
+    ff_dim = 32  # Hidden layer size in feed forward network inside transformer
+
+    transformer = transformer_block(embed_dim, num_heads, ff_dim)
+
+    # Modèle CNN
+    cnn_model = Sequential()
+    cnn_model.add(Conv1D(64, 3, activation='relu', input_shape=(n_timesteps, n_features)))
+    cnn_model.add(MaxPooling1D(2))
+    cnn_model.add(Conv1D(128, 3, activation='relu'))
+    cnn_model.add(MaxPooling1D(2))
+    cnn_model.add(Flatten())
+    cnn_model.add(RepeatVector(n_timesteps))
+
+    # Transformer input
+    transformer_input = Input(shape=(n_timesteps, n_features))
+    transformer_output = transformer(transformer_input)
+
+    # Merge models
+    merged_output = Concatenate()([cnn_model.output, transformer_output])
+
+    # Add fully connected layer and output layer
+    merged_output = Dense(128, activation='relu')(merged_output)
+    output = Dense(num_classes, activation='softmax')(merged_output)
+
+    # Create the model
+    merged_model = Model(inputs=[cnn_model.input, transformer_input], outputs=output)
+
+    optimizer = Adam(learning_rate=0.001)
+    merged_model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+
+    merged_model.fit([X_train_lstm, X_train_lstm], y_train_encoded, validation_split=0.30, callbacks=[early_stopping], epochs=100, verbose=1)
+
+    return merged_model
+
 
 def create_and_fit_model_merged_bi(X_train, y_train, timesteps=10):
     unique_labels, counts = np.unique(y_train, return_counts=True)
@@ -26,7 +112,7 @@ def create_and_fit_model_merged_bi(X_train, y_train, timesteps=10):
     early_stopping = EarlyStopping(monitor='val_loss', patience=35, restore_best_weights=True)
     n_features = X_train.shape[1]
 
-    n_timesteps = 5
+    n_timesteps = 10
     n_samples_train = np.floor(X_train.shape[0] / n_timesteps).astype(int)
     X_train = np.resize(X_train, (n_samples_train*n_timesteps, n_features))
     X_train_lstm = X_train.reshape(n_samples_train, n_timesteps, n_features)
@@ -38,7 +124,7 @@ def create_and_fit_model_merged_bi(X_train, y_train, timesteps=10):
     y_train_encoded = to_categorical(y_train_encoded, num_classes)
     y_train_encoded = y_train_encoded.reshape(n_samples_train, n_timesteps, num_classes)
 
-    print(y_train_encoded)
+
     # Modèle CNN
     cnn_model = Sequential()
     cnn_model.add(Conv1D(64, 3, activation='relu', input_shape=(n_timesteps, n_features)))
@@ -92,11 +178,11 @@ def create_and_fit_model_merged(X_train, y_train, timesteps=10):
     early_stopping = EarlyStopping(monitor='val_loss', patience=15)
     n_features = X_train.shape[1]
 
-    n_timesteps = 5
+    n_timesteps = 30
     n_samples_train = np.floor(X_train.shape[0] / n_timesteps).astype(int)
     X_train = np.resize(X_train, (n_samples_train*n_timesteps, n_features))
     X_train_lstm = X_train.reshape(n_samples_train, n_timesteps, n_features)
-    y_train = y_train.values.ravel()
+
     le.fit(y_train)
     y_train_encoded = le.fit_transform(y_train.values.ravel())
 
@@ -210,38 +296,49 @@ def create_and_fit_model(X_train, y_train, timesteps=10):
     return model
 
 
-def create_and_fit_model_ml(X_train, y_train, timesteps=10):
+def create_and_fit_model_ml(X_train, y_train):
 
-    import pandas as pd
-    from sklearn.model_selection import GridSearchCV
-    from sklearn.ensemble import RandomForestClassifier
-    from sklearn.model_selection import train_test_split
-    from sklearn.metrics import accuracy_score
 
-    # Créez une instance du classificateur
-    clf = RandomForestClassifier()
+    # Définir les paramètres pour la recherche de grille
+    param_grid = {
+        'n_estimators': [50, 100, 200],
+        'max_depth': [2, 4, 6],
+        'learning_rate': [0.01, 0.1, 0.2],
+        'subsample': [0.5, 0.7, 1.0],
+        'colsample_bytree': [0.4, 0.6, 0.8, 1.0],
+    }
 
-    # Définissez la grille de paramètres que vous souhaitez explorer
+    # Créer un modèle XGBoost de base
+    xgb_model = xgb.XGBClassifier()
 
-    # Créez une instance de GridSearchCV
-    grid_search = GridSearchCV(estimator=clf, param_grid={'max_depth': None, 'min_samples_split': 2, 'n_estimators': 1000}, cv=10, scoring='accuracy', verbose=10, n_jobs=-1)
+    # Instancier la recherche de grille
+    grid_search = GridSearchCV(estimator=xgb_model, param_grid=param_grid, cv=10, scoring='accuracy', n_jobs=-1, verbose=5)
 
-    # Entraînez le GridSearchCV pour trouver les meilleurs paramètres
-    grid_search.fit(X_train, y_train.values.ravel())
+    # Ajuster la recherche de grille aux données
+    grid_search.fit(X_train, y_train)
 
-    # Affichez les meilleurs paramètres trouvés par la recherche sur grille
-    print("Best parameters found: ", grid_search.best_params_)
+    # Afficher les meilleurs paramètres
+    print('Best parameters found: ', grid_search.best_params_)
 
-    # Utilisez le meilleur modèle pour faire des prédictions
-    best_clf = grid_search.best_estimator_
+    return grid_search.best_estimator_
 
-    return best_clf
+
+
+
+
+
 
 def predict_model_ml(model, X_to_predict):
     """
     Retourne une prédiction sur le model
     """
     return model.predict(X_to_predict)
+
+
+
+def upload_model_ml(model, name_of_model):
+    with open(f'models/model.{name_of_model}', 'wb') as file:
+        pickle.dump(model, file)
 
 
 def load_model_ml(name_of_the_model=False):
