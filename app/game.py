@@ -1,7 +1,7 @@
 import random
 
 def random_letter():
-    alphabet = 'A'
+    alphabet = 'AB'
     # alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
     random_letter = random.choice(alphabet)
