@@ -2,7 +2,10 @@ from load_from_bq import load_from_bq
 from data_proc import preproc
 from model import create_and_fit_model_ml
 from registry import save_model
-from model import create_and_fit_model_ml, upload_model_ml#create_and_fit_model_merged, create_and_fit_model_merged_bi
+from model import create_and_fit_model_ml, upload_model_ml, create
+from sklearn.ensemble import RandomForestClassifier
+
+# Créez une instance du classificateur
 
 df = load_from_bq()
 
@@ -44,11 +47,19 @@ MERGED MODELS LAUNCHING
 BOOST MODEL LAUNCHING
 """
 
-model = create_and_fit_model_ml(X_train_df, X_test_df)
+#model = create_and_fit_model_ml(X_train_df, X_test_df)
 
-upload_model_ml(model, "boost")
+#upload_model_ml(model, "boost")
 
 
 """
 MERGED AND TRANSFORMER MODEL LAUNCHING
 """
+
+#model = create_and_fit_model_ml(X_train_df, X_test_df)
+
+#upload_model_ml(model, "boost")
+
+clf = create(X_train_df, y_train_df)
+
+upload_model_ml(clf, "model_base_testing")
