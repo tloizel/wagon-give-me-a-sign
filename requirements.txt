@@ -20,6 +20,7 @@ protobuf
 
 #our project
 opencv-python
+joblib
 #opencv-python-headless
 mediapipe
 streamlit
