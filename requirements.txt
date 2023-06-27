@@ -17,6 +17,7 @@ google-cloud-storage
 db-dtypes
 pyarrow
 protobuf
+xgboost
 
 #our project
 opencv-python
