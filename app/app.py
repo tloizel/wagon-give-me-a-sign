@@ -78,7 +78,6 @@ class VideoProcessor:
                 res = 'none' if pred is None else pred
 
                 self.predicting_letter = res[0].capitalize()
-                st.write('hey')
 
                 # res = res[0].tolist()
                 # max_value = max(res)
@@ -145,7 +144,6 @@ def main():
 
     # Streamlit UI
     st.title("Letter Prediction")
-    placeholder = st.empty()
 
 
     # Stream
