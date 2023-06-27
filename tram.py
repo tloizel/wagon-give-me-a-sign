@@ -1,6 +1,5 @@
 from load_from_bq import load_from_bq
 from data_proc import preproc
-from model import create_and_fit_model_ml
 from registry import save_model
 from model import create_and_fit_model_ml, upload_model_ml, create
 from sklearn.ensemble import RandomForestClassifier

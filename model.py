@@ -253,11 +253,11 @@ def create_and_fit_model_ml(X_train, y_train):
 
 def create(X_train, y_train):
     """
-    Model de ML_xgboost
+    Model de base qui marche en random forest
     """
-
+    #1 n_estimators=1000  min_samples_split=2
     # Définir les paramètres pour la recherche de grille
-    clf = RandomForestClassifier(max_depth=None, min_samples_split=2, n_estimators=1000)
+    clf = RandomForestClassifier(max_depth=None, min_samples_split=2, n_estimators=10, verbose=1, n_jobs=-1)
     clf.fit(X_train, y_train)
 
     # Afficher les meilleurs paramètres
