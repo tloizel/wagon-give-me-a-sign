@@ -21,7 +21,7 @@ from sklearn.metrics import accuracy_score
 import numpy as np
 from keras.layers import BatchNormalization, LeakyReLU
 import tensorflow as tf
-import tensorflow_text as text
+# import tensorflow_text as text
 from tensorflow.keras.layers import MultiHeadAttention, Dropout, LayerNormalization, Dense, Flatten, Input
 from tensorflow.keras.models import Model
 

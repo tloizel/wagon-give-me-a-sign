@@ -1,7 +1,7 @@
 import streamlit as st
 import cv2
 import mediapipe as mp
-from model import load_model, predict_model_ml
+from model import load_model_ml, predict_model_ml
 import pandas as pd
 from data_proc import preproc_predict
 #from tensorflow.keras.models import load_model
@@ -138,7 +138,7 @@ def main():
                         min_detection_confidence=0.7)
 
     # load model
-    model = load_model()
+    model = load_model_ml()
 
     # create instance of video stream with processing
     video_processor = VideoProcessor(mp_drawing, mp_drawing_styles, mp_hands, hands, model)
