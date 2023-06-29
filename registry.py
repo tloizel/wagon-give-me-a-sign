@@ -41,10 +41,11 @@ def save_model(model, ml=False, model_name="no_name_model") -> None:
     if MODEL_TARGET == "gcs":
         from google.cloud import storage
         # 🎁 We give you this piece of code as a gift. Please read it carefully! Add a breakpoint if needed!
+
         # Update the service account email and project ID
         credentials = service_account.Credentials.from_service_account_file("bq_keys.json")
         client = storage.Client(project=PROJECT_ID, credentials=credentials)
-        print(client)
+
         bucket = client.bucket(BUCKET_NAME)
         blob = bucket.blob(f"{model_path}")
         blob.upload_from_filename(model_path)
