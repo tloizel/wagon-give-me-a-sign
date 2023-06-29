@@ -1,19 +1,23 @@
 from load_from_bq import load_from_bq
 from data_proc import preproc
-from model import create_and_fit_model
-from registry import save_model
-from model import create_and_fit_model_ml, upload_model_ml#create_and_fit_model_merged, create_and_fit_model_merged_bi
 
-df = load_from_bq()
+from registry import save_model, load_model
+from model import load_model_ml #create_and_fit_model_merged, create_and_fit_model_merged_bi
+#from model import create_and_fit_model_ml, upload_model_ml, create_and_fit_model_merged_transformer, load_model_ml
+from sklearn.ensemble import RandomForestClassifier
 
-X_train_df, X_test_df, y_train_df, y_test_df = preproc(df, test_size=0.3, random_state=42)
-
-
-#model = create_and_fit_model_ml(X_train_df, y_train_df)
+import tensorflow as tf
+# Créez une instance du classificateur
 
 
-model = create_and_fit_model(X_train_df, y_train_df)
-save_model(model, False, 'ML_test_gcs_1')
+#df = load_from_bq()
+#
+#X_train_df, X_test_df, y_train_df, y_test_df = preproc(df, test_size=0.3, random_state=42)
+#
+#model = create_and_fit_model(X_train_df, y_train_df)
+#
+#save_model(model, False, 'ML_test_gcs_2')
+
 
 #model.save('models/LSTM_2')
 
@@ -44,11 +48,41 @@ MERGED MODELS LAUNCHING
 BOOST MODEL LAUNCHING
 """
 
-model = create_and_fit_model_ml(X_train_df, X_test_df)
+#model = create_and_fit_model_ml(X_train_df, y_train_df)
 
-upload_model_ml(model, "boost")
+#upload_model_ml(model, "boost")
 
 
 """
-MERGED AND TRANSFORMER MODEL LAUNCHING
+CNN AND TRANSFORMER MERGED MODEL LAUNCHING
 """
+
+#model_de_la_muerte = create_and_fit_model_merged_transformer(X_train_df, y_train_df)
+#model_de_la_muerte.save('models/model_de_la_muerte')
+
+
+
+"""
+CLF DE BASE
+"""
+
+#clf = create(X_train_df, y_train_df)
+
+#upload_model_ml(clf, "model_base_testing")
+
+
+#
+
+"""
+SAVE YOUR MODEL TO BQ
+"""
+#model = load_model('model.random_forest_1')
+
+
+
+#model = tf.keras.models.load_model('models/model_de_la_muerte')
+#save_model(model, ml=False, model_name="merged_cnn_transformer_1")
+
+
+dl_model = load_model(ml=False, model_name="merged_cnn_transformer_1")
+print(dl_model)

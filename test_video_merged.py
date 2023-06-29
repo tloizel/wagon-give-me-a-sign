@@ -12,7 +12,9 @@ ALPHABET = list(string.ascii_lowercase)
 import tensorflow as tf
 tf.config.run_functions_eagerly(True)
 
-model = tf.keras.models.load_model('models/model_deep_merged')
+model = tf.keras.models.load_model('models/model_de_la_muerte')
+
+
 SEQUENCE_LENGTH = 10
 #load model
 image_sequence = []
