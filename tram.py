@@ -83,5 +83,7 @@ SAVE YOUR MODEL TO BQ
 #save_model(model, ml=False, model_name="merged_cnn_transformer_1")
 
 
-dl_model = load_model(ml=False, model_name="merged_cnn_transformer_1")
-print(dl_model)
+#dl_model = load_model(ml=False, model_name="merged_cnn_transformer_1")
+
+ml_model = load_model(ml=True, model_name="random_forest_1", timestamp="20230629-193635")
+print(ml_model)

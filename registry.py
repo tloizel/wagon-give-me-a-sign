@@ -59,7 +59,7 @@ def save_model(model, ml=False, model_name="no_name_model") -> None:
 
 
 
-def load_model(ml=False, model_name="no_name_model") -> keras.Model:
+def load_model(ml=False, model_name="no_name_model", timestamp="") -> keras.Model:
     """
     Return a saved model:
     - locally (latest one in alphabetical order)
@@ -99,7 +99,7 @@ def load_model(ml=False, model_name="no_name_model") -> keras.Model:
 
         credentials = service_account.Credentials.from_service_account_file("bq_keys.json")
         client = storage.Client(project=PROJECT_ID, credentials=credentials)
-        blobs = list(client.get_bucket(BUCKET_NAME).list_blobs(prefix=f"models/{prefix}_{model_name}/"))
+        blobs = list(client.get_bucket(BUCKET_NAME).list_blobs(prefix=f"models/{prefix}_{model_name}/{timestamp}"))
 
         if blobs:
             latest_blob = max(blobs, key=lambda x: x.updated)
@@ -112,6 +112,7 @@ def load_model(ml=False, model_name="no_name_model") -> keras.Model:
                 print(f"✅ Latest model {model_name} DEEP downloaded from cloud storage")
                 return latest_model
             else:
+                os.makedirs(os.path.dirname(latest_model_path_to_save), exist_ok=True)
                 latest_blob.download_to_filename(latest_model_path_to_save)
                 latest_model = joblib.load(latest_model_path_to_save)
                 print(f"✅ Latest model {model_name} ML downloaded from cloud storage")
