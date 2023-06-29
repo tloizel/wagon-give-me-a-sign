@@ -14,6 +14,8 @@ import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 import numpy as np
 from keras.layers import BatchNormalization, LeakyReLU
+from sklearn import preprocessing
+
 
 '''
 PARTIE RESERVEE A LA FONCTION DE CREATION DE TRANSFORMER
@@ -60,9 +62,8 @@ def create_and_fit_model_merged_transformer(X_train, y_train, timesteps=10):
     y_train_encoded = to_categorical(y_train_encoded, num_classes)
     y_train_encoded = y_train_encoded.reshape(n_samples_train, n_timesteps, num_classes)
 
-
-    # Modèle CNN
-    embed_dim = 32  # This can be adjusted depending on your needs
+    # Transformer parameters
+    embed_dim = n_features  # This must match the number of features
     num_heads = 2  # Number of attention heads
     ff_dim = 32  # Hidden layer size in feed forward network inside transformer
 
@@ -78,7 +79,7 @@ def create_and_fit_model_merged_transformer(X_train, y_train, timesteps=10):
     cnn_model.add(RepeatVector(n_timesteps))
 
     # Transformer input
-    transformer_input = Input(shape=(n_timesteps, n_features))
+    transformer_input = Input(shape=(n_timesteps, embed_dim))
     transformer_output = transformer(transformer_input)
 
     # Merge models
@@ -92,11 +93,12 @@ def create_and_fit_model_merged_transformer(X_train, y_train, timesteps=10):
     merged_model = Model(inputs=[cnn_model.input, transformer_input], outputs=output)
 
     optimizer = Adam(learning_rate=0.001)
-    merged_model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+    merged_model.compile(loss='categorical_crossentropy', optimizer="adam", metrics=['accuracy'])
 
-    merged_model.fit([X_train_lstm, X_train_lstm], y_train_encoded, validation_split=0.30, callbacks=[early_stopping], epochs=100, verbose=1)
+    merged_model.fit([X_train_lstm, X_train_lstm], y_train_encoded, validation_split=0.30, callbacks=[early_stopping], epochs=100, verbose=1, batch_size=16)
 
     return merged_model
+
 
 
 def create_and_fit_model_merged_bi(X_train, y_train, timesteps=10):
@@ -226,7 +228,15 @@ def create_and_fit_model_ml(X_train, y_train):
     """
     Model de ML_xgboost
     """
+    y_train = np.ravel(y_train)
 
+    le = preprocessing.LabelEncoder()
+
+    # Fit the encoder to the pandas column
+    le.fit(y_train)
+
+    # Apply the fitted encoder to the pandas column
+    y_train = le.transform(y_train)
     # Définir les paramètres pour la recherche de grille
     param_grid = {
         'n_estimators': [50, 100, 200],
@@ -240,13 +250,19 @@ def create_and_fit_model_ml(X_train, y_train):
     xgb_model = xgb.XGBClassifier()
 
     # Instancier la recherche de grille
-    grid_search = GridSearchCV(estimator=xgb_model, param_grid=param_grid, cv=10, scoring='accuracy', n_jobs=-1, verbose=5)
+    grid_search = GridSearchCV(estimator=xgb_model, param_grid=param_grid, cv=5, scoring='accuracy', n_jobs=-1, verbose=10)
 
     # Ajuster la recherche de grille aux données
     grid_search.fit(X_train, y_train)
 
-    # Afficher les meilleurs paramètres
-    print('Best parameters found: ', grid_search.best_params_)
+    # Le meilleur score trouvé par GridSearchCV
+    best_accuracy = grid_search.best_score_
+
+    # Les meilleurs paramètres trouvés par GridSearchCV
+    best_params = grid_search.best_params_
+
+    print(f"L'exactitude du meilleur modèle est: {best_accuracy}")
+    print(f"Les meilleurs paramètres sont: {best_params}")
 
     return grid_search.best_estimator_
 
