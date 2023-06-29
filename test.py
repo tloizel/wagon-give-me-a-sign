@@ -8,7 +8,7 @@ from tensorflow.keras.models import load_model
 import string
 ALPHABET = list(string.ascii_lowercase)
 
-model = load_model_ml('model.random_forest_1')
+model = load_model_ml('ML_test_gcs_2/20230627-220647.h5')
 
 #load model
 
