@@ -1,6 +1,6 @@
 from load_from_bq import load_from_bq
 from data_proc import preproc
-from model import create_and_fit_model_ml
+from model import create_and_fit_model
 from registry import save_model
 from model import create_and_fit_model_ml, upload_model_ml#create_and_fit_model_merged, create_and_fit_model_merged_bi
 
@@ -11,9 +11,9 @@ X_train_df, X_test_df, y_train_df, y_test_df = preproc(df, test_size=0.3, random
 
 #model = create_and_fit_model_ml(X_train_df, y_train_df)
 
-#save_model(model, True, 'ML_test_gcs_1')
 
-#model = create_and_fit_model_ml(X_train_df, y_train_df)
+model = create_and_fit_model(X_train_df, y_train_df)
+save_model(model, False, 'ML_test_gcs_1')
 
 #model.save('models/LSTM_2')
 

@@ -2,37 +2,66 @@ import streamlit as st
 import cv2
 import mediapipe as mp
 from model import load_model_ml, predict_model_ml
-import pandas as pd
-from data_proc import preproc_predict
-#from tensorflow.keras.models import load_model
-import string
-ALPHABET = list(string.ascii_lowercase)
 import av
 from streamlit_webrtc import webrtc_streamer, WebRtcMode, RTCConfiguration
 from game import random_letter
 import ipdb
+from data_proc import preproc_predict
+import threading
+
+lock = threading.Lock()
+img_container = {"img": None}
+
+# load hands
+mp_drawing = mp.solutions.drawing_utils
+mp_drawing_styles = mp.solutions.drawing_styles
+mp_hands = mp.solutions.hands
+hands = mp_hands.Hands(static_image_mode=False,
+                    max_num_hands=1,
+                    min_detection_confidence=0.7)
+
+# load model
+model = load_model_ml()
+
+def video_frame_callback(frame):
+    img = frame.to_ndarray(format="bgr24")
+    with lock:
+        img_container["img"] = img
+    return frame
 
 
+def process_out_of_class(image):
+
+    image.flags.writeable = False
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    results = hands.process(image)
+    # Draw the hand annotations on the image.
+    image.flags.writeable = True
+
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+
+    if results.multi_hand_landmarks:
+        #predict and show prediction
+        coords_df = preproc_predict(image, {'mp_hands': mp_hands, 'hands': hands, 'results': results})
+        if coords_df is None:
+            pass
+        else:
+            # pred = model.predict_proba(coords_df)
+            pred = model.predict(coords_df)
+
+            res = 'none' if pred is None else pred
+
+            predicting_letter = res[0].capitalize()
+
+            return predicting_letter
 
 class VideoProcessor:
-
-    def __init__(self, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
-        self.mp_drawing = mp_drawing
-        self.mp_drawing_styles = mp_drawing_styles
-        self.mp_hands = mp_hands
-        self.hands = hands
-        self.model = model
-        #global to class
-        self.current_prediction = random_letter()
-        self.matching_frames = 0
-        self.num_consecutive_frames = 10
-        self.predicting_letter = None
 
     def process(self, image):
 
         image.flags.writeable = False
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        results = self.hands.process(image)
+        results = hands.process(image)
         # Draw the hand annotations on the image.
         image.flags.writeable = True
 
@@ -41,12 +70,12 @@ class VideoProcessor:
 
         if results.multi_hand_landmarks:
             for hand_landmarks in results.multi_hand_landmarks:
-                self.mp_drawing.draw_landmarks(
+                mp_drawing.draw_landmarks(
                     image,
                     hand_landmarks,
-                    self.mp_hands.HAND_CONNECTIONS,
-                    self.mp_drawing_styles.get_default_hand_landmarks_style(),
-                    self.mp_drawing_styles.get_default_hand_connections_style())
+                    mp_hands.HAND_CONNECTIONS,
+                    mp_drawing_styles.get_default_hand_landmarks_style(),
+                    mp_drawing_styles.get_default_hand_connections_style())
 
             #for rectangle later
             H, W, _ = image.shape
@@ -67,17 +96,15 @@ class VideoProcessor:
 
 
             #predict and show prediction
-            coords_df = preproc_predict(image, {'mp_hands': self.mp_hands, 'hands': self.hands, 'results': results})
+            coords_df = preproc_predict(image, {'mp_hands': mp_hands, 'hands': hands, 'results': results})
             if coords_df is None:
                 pass
             else:
                 # pred = model.predict_proba(coords_df)
-                pred = self.model.predict(coords_df)
+                pred = model.predict(coords_df)
 
 
                 res = 'none' if pred is None else pred
-
-                self.predicting_letter = res[0].capitalize()
 
                 # res = res[0].tolist()
                 # max_value = max(res)
@@ -86,7 +113,7 @@ class VideoProcessor:
                 # if max_value>0.90:
                 if res is not None:
                     # answer = f"{ALPHABET[max_index].capitalize()} ({round(max_value,2)*100}%)"
-                    answer = res[0]
+                    answer = res[0].capitalize()
 
                 else:
                     answer = "No letter"
@@ -101,20 +128,6 @@ class VideoProcessor:
                             3,
                             cv2.LINE_AA)
 
-
-        # Make a prediction for the current frame
-        if self.current_prediction == self.predicting_letter and self.predicting_letter is not None:
-            self.matching_frames += 1
-            print(f'+1 , {self.matching_frames}')
-
-            if self.matching_frames == self.num_consecutive_frames:
-                print('Won!')
-                self.current_prediction = random_letter()
-                self.matching_frames = 0
-        else:
-            self.matching_frames = 0
-            print(f'lost')
-
         return image
 
     def recv(self, frame):
@@ -123,27 +136,20 @@ class VideoProcessor:
             return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 
+def most_common(lst):
+    return max(set(lst), key=lst.count)
+
 def main():
 
     RTC_CONFIGURATION = RTCConfiguration(
     {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
     )
 
-    mp_drawing = mp.solutions.drawing_utils
-    mp_drawing_styles = mp.solutions.drawing_styles
-    mp_hands = mp.solutions.hands
-    hands = mp_hands.Hands(static_image_mode=False,
-                        max_num_hands=1,
-                        min_detection_confidence=0.7)
-
-    # load model
-    model = load_model_ml()
-
-    # create instance of video stream with processing
-    video_processor = VideoProcessor(mp_drawing, mp_drawing_styles, mp_hands, hands, model)
-
     # Streamlit UI
     st.title("Letter Prediction")
+    goal = random_letter()
+    goal_text = st.empty()
+    goal_text.text(f"# Do a {goal}")
 
 
     # Stream
@@ -152,9 +158,47 @@ def main():
         mode=WebRtcMode.SENDRECV,
         rtc_configuration=RTC_CONFIGURATION,
         media_stream_constraints={"video": True, "audio": False},
-        video_processor_factory=lambda: video_processor,
-        async_processing=True
+        video_processor_factory= VideoProcessor,
+        async_processing=True,
+        video_frame_callback=video_frame_callback,
         )
+
+    result_text = st.empty()
+    result_text.text(f"Let's play")
+
+    congratulations_text = st.empty()
+
+    predictions_list = []
+    counter = 0
+
+    while ctx.state.playing:
+        with lock:
+            img = img_container["img"]
+        if img is None:
+            continue
+
+        pred = process_out_of_class(img)
+
+        if pred is None:
+            continue
+
+        result_text.text(f"You are doing a {pred}")
+
+        predictions_list.append(pred)
+        counter += 1
+        if counter == 10:
+            letter = most_common(predictions_list)
+            predictions_list = []
+            counter = 0
+            if letter == goal :
+                goal = random_letter()
+                congratulations_text.text(f"Yaaay 🍾")
+                goal_text.text(f"# Do a {goal}")
+            else:
+                congratulations_text.text("")
+
+
+
 
 
 
