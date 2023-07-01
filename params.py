@@ -10,6 +10,6 @@ import streamlit as st
 # BUCKET_NAME = os.environ.get("BUCKET_NAME")
 
 PROJECT_ID = st.secrets["PROJECT_ID"]
-TABLE_ID = st.secrets["PROJECT_ID"]
+TABLE_ID = st.secrets["TABLE_ID"]
 MODEL_TARGET = st.secrets["MODEL_TARGET"]
 BUCKET_NAME = st.secrets["BUCKET_NAME"]
