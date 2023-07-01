@@ -6,7 +6,7 @@ import time
 from colorama import Fore, Style
 
 # added only for DL
-from tensorflow import keras
+# from tensorflow import keras
 
 from params import *
 import os
@@ -63,7 +63,7 @@ def save_model(model, ml=False, model_name="no_name_model") -> None:
 
 
 
-def load_model(ml=False, model_name="no_name_model", timestamp="") -> keras.Model:
+def load_model(ml=False, model_name="no_name_model", timestamp=""): #-> keras.Model:
     """
     Return a saved model:
     - locally (latest one in alphabetical order)
@@ -73,28 +73,28 @@ def load_model(ml=False, model_name="no_name_model", timestamp="") -> keras.Mode
     Return None (but do not Raise) if no model is found
     """
 
-    if MODEL_TARGET == "local":
-        print(Fore.BLUE + f"\nLoad latest model from local registry..." + Style.RESET_ALL)
+    # if MODEL_TARGET == "local":
+    #     print(Fore.BLUE + f"\nLoad latest model from local registry..." + Style.RESET_ALL)
 
-        # Get the latest model version name by the timestamp on disk
-        local_model_directory = os.path.join("models", "ML_*" if ml else "DL_*")
-        local_model_paths = glob.glob(f"{local_model_directory}/*")
+    #     # Get the latest model version name by the timestamp on disk
+    #     local_model_directory = os.path.join("models", "ML_*" if ml else "DL_*")
+    #     local_model_paths = glob.glob(f"{local_model_directory}/*")
 
-        if not local_model_paths:
-            return None
+    #     if not local_model_paths:
+    #         return None
 
-        most_recent_model_path_on_disk = sorted(local_model_paths)[-1]
+    #     most_recent_model_path_on_disk = sorted(local_model_paths)[-1]
 
-        print(Fore.BLUE + f"\nLoad latest model from disk..." + Style.RESET_ALL)
+    #     print(Fore.BLUE + f"\nLoad latest model from disk..." + Style.RESET_ALL)
 
-        if ml:
-            latest_model = joblib.load(most_recent_model_path_on_disk)
-        else:
-            latest_model = keras.models.load_model(most_recent_model_path_on_disk)
+    #     if ml:
+    #         latest_model = joblib.load(most_recent_model_path_on_disk)
+    #     else:
+    #         latest_model = keras.models.load_model(most_recent_model_path_on_disk)
 
-        print("✅ Model loaded from local disk")
+    #     print("✅ Model loaded from local disk")
 
-        return latest_model
+    #     return latest_model
 
     prefix = "DL" if not ml else "ML"
 
@@ -113,7 +113,7 @@ def load_model(ml=False, model_name="no_name_model", timestamp="") -> keras.Mode
             if ml is not True:
                 os.makedirs(os.path.dirname(latest_model_path_to_save), exist_ok=True)
                 latest_blob.download_to_filename(latest_model_path_to_save)
-                latest_model = keras.models.load_model(latest_model_path_to_save)
+                # latest_model = keras.models.load_model(latest_model_path_to_save)
                 print(f"✅ Latest model {model_name} DEEP downloaded from cloud storage")
                 return latest_model
             else:
