@@ -5,8 +5,8 @@ import time
 
 from colorama import Fore, Style
 
-# add for DL
-# from tensorflow.lite import keras
+# added only for DL
+from tensorflow import keras
 
 from params import *
 import os
@@ -20,6 +20,7 @@ def save_model(model, ml=False, model_name="no_name_model") -> None:
     - Persist trained model locally on the hard drive at f"/models/model_name/{timestamp}.h5" for deep models or f"/models/model_name/{timestamp}.joblib for ML models"
     - if MODEL_TARGET='gcs', also persist it in the bucket on GCS at "models/model_name/{timestamp}.h5/joblib"
     """
+
     if ml is not True:
     # Save DEEP model locally
         timestamp = time.strftime("%Y%m%d-%H%M%S")
@@ -36,7 +37,7 @@ def save_model(model, ml=False, model_name="no_name_model") -> None:
 
         joblib.dump(model, model_path)
         # with open(f'{directory}/{timestamp}', 'wb') as file:
-        #     pickle.dump(model, file)t
+        #     pickle.dump(model, file)
         print("✅ ML Model saved locally")
         #model_path = os.path.join(f"{directory}",f"{timestamp}")
 
@@ -62,7 +63,7 @@ def save_model(model, ml=False, model_name="no_name_model") -> None:
 
 
 
-def load_model(ml=False, model_name="no_name_model", timestamp=""):
+def load_model(ml=False, model_name="no_name_model", timestamp="") -> keras.Model:
     """
     Return a saved model:
     - locally (latest one in alphabetical order)
@@ -72,28 +73,28 @@ def load_model(ml=False, model_name="no_name_model", timestamp=""):
     Return None (but do not Raise) if no model is found
     """
 
-    # if MODEL_TARGET == "local":
-    #     print(Fore.BLUE + f"\nLoad latest model from local registry..." + Style.RESET_ALL)
+    if MODEL_TARGET == "local":
+        print(Fore.BLUE + f"\nLoad latest model from local registry..." + Style.RESET_ALL)
 
-    #     # Get the latest model version name by the timestamp on disk
-    #     local_model_directory = os.path.join("models", "ML_*" if ml else "DL_*")
-    #     local_model_paths = glob.glob(f"{local_model_directory}/*")
+        # Get the latest model version name by the timestamp on disk
+        local_model_directory = os.path.join("models", "ML_*" if ml else "DL_*")
+        local_model_paths = glob.glob(f"{local_model_directory}/*")
 
-    #     if not local_model_paths:
-    #         return None
+        if not local_model_paths:
+            return None
 
-    #     most_recent_model_path_on_disk = sorted(local_model_paths)[-1]
+        most_recent_model_path_on_disk = sorted(local_model_paths)[-1]
 
-    #     print(Fore.BLUE + f"\nLoad latest model from disk..." + Style.RESET_ALL)
+        print(Fore.BLUE + f"\nLoad latest model from disk..." + Style.RESET_ALL)
 
-    #     if ml:
-    #         latest_model = joblib.load(most_recent_model_path_on_disk)
-    #     else:
-    #         latest_model = keras.models.load_model(most_recent_model_path_on_disk)
+        if ml:
+            latest_model = joblib.load(most_recent_model_path_on_disk)
+        else:
+            latest_model = keras.models.load_model(most_recent_model_path_on_disk)
 
-    #     print("✅ Model loaded from local disk")
+        print("✅ Model loaded from local disk")
 
-    #     return latest_model
+        return latest_model
 
     prefix = "DL" if not ml else "ML"
 

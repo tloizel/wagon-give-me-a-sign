@@ -6,7 +6,7 @@ from data_proc import preproc_predict
 from model import load_model, predict_model_ml
 import numpy as np
 import ipdb
-#from tensorflow.lite.keras.models import load_model
+#from tensorflow.keras.models import load_model
 import string
 ALPHABET = list(string.ascii_lowercase)
 import tensorflow as tf
