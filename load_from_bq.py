@@ -14,7 +14,6 @@ def load_from_bq():
 
     # Submit the query and fetch the results
     df = client.query(query).to_dataframe()
-    print(df)
     return df
 
 if __name__ == "__main__":
