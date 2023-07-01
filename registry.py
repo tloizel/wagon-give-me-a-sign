@@ -12,6 +12,7 @@ import joblib
 
 from google.oauth2 import service_account
 
+
 def save_model(model, ml=False, model_name="no_name_model") -> None:
     """
     - Persist trained model locally on the hard drive at f"/models/model_name/{timestamp}.h5" for deep models or f"/models/model_name/{timestamp}.joblib for ML models"
