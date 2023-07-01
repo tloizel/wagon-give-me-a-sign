@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import streamlit as st
+from google.oauth2 import service_account
 
 ###### VARIABLES
 # PROJECT_ID = os.environ.get("PROJECT_ID")
@@ -13,3 +14,6 @@ PROJECT_ID = st.secrets["PROJECT_ID"]
 TABLE_ID = st.secrets["TABLE_ID"]
 MODEL_TARGET = st.secrets["MODEL_TARGET"]
 BUCKET_NAME = st.secrets["BUCKET_NAME"]
+
+
+GCP_SERVICE_ACCOUNT = service_account.Credentials.from_service_account_info(st.secrets['connections']['gcs'])
