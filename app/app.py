@@ -30,7 +30,8 @@ hands = mp_hands.Hands(static_image_mode=False,
 @st.cache_data()
 def patience_while_i_load_the_model():
     # Load and return the model
-    return load_model(ml=True, model_name='random_forest_1')
+    # return load_model(ml=True, model_name='random_forest_1')
+    return load_model(ml=True, model_name='model_base_testing')
 
 
 # model = load_model(ml=True, model_name='random_forest_1')
