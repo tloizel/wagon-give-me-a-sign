@@ -11,5 +11,5 @@ import streamlit as st
 
 PROJECT_ID = st.secrets["PROJECT_ID"]
 TABLE_ID = st.secrets["PROJECT_ID"]
-MODEL_TARGET = st.secrets("MODEL_TARGET")
+MODEL_TARGET = st.secrets["MODEL_TARGET"]
 BUCKET_NAME = st.secrets["BUCKET_NAME"]
