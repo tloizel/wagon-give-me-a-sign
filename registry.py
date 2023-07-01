@@ -98,8 +98,8 @@ def load_model(ml=False, model_name="no_name_model", timestamp="") -> keras.Mode
         from google.cloud import storage
         print(Fore.BLUE + f"\nLoad model {model_name} from GCS..." + Style.RESET_ALL)
 
-        credentials = service_account.Credentials.from_service_account_file("bq_keys.json")
-        client = storage.Client(project=PROJECT_ID, credentials=credentials)
+        # credentials = service_account.Credentials.from_service_account_file("bq_keys.json")
+        client = storage.Client(project=PROJECT_ID, credentials=GCP_SERVICE_ACCOUNT)
         blobs = list(client.get_bucket(BUCKET_NAME).list_blobs(prefix=f"models/{prefix}_{model_name}/{timestamp}"))
 
         if blobs:
