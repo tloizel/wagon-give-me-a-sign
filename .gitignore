@@ -9,3 +9,4 @@ models/
 csv/
 csv
 .pyc
+secrets.toml
