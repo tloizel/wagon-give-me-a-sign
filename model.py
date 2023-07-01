@@ -1,11 +1,11 @@
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, Dropout, Conv1D, MaxPooling1D, Flatten, Bidirectional, RepeatVector, MultiHeadAttention, LayerNormalization, Input
+from tensorflow.lite.keras.models import Sequential
+from tensorflow.lite.keras.layers import LSTM, Dense, Dropout, Conv1D, MaxPooling1D, Flatten, Bidirectional, RepeatVector, MultiHeadAttention, LayerNormalization, Input
 from sklearn.preprocessing import LabelEncoder
-from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.lite.keras.callbacks import EarlyStopping
 import pickle
-from tensorflow.keras.utils import to_categorical
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras import Model
+from tensorflow.lite.keras.utils import to_categorical
+from tensorflow.lite.keras.optimizers import Adam
+from tensorflow.lite.keras import Model
 import tensorflow as tf
 from keras.layers import Concatenate
 import xgboost as xgb

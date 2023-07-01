@@ -5,7 +5,7 @@ import time
 from model import load_model_ml, predict_model_ml
 # import pandas as pd
 # from data_proc import preproc_predict
-#from tensorflow.keras.models import load_model
+#from tensorflow.lite.keras.models import load_model
 import string
 ALPHABET = list(string.ascii_lowercase)
 import av
