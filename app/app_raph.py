@@ -40,6 +40,10 @@ def video_frame_callback(frame):
         img_container["img"] = img
     return frame
 
+
+model = load_model_ml()
+
+
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
@@ -102,23 +106,11 @@ def process_out_of_class(image, model):
 
 class VideoProcessor:
 
-    def __init__(self, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
-        self.mp_drawing = mp_drawing
-        self.mp_drawing_styles = mp_drawing_styles
-        self.mp_hands = mp_hands
-        self.hands = hands
-        self.model = model
-        #global to class
-        self.current_prediction = random_letter()
-        self.matching_frames = 0
-        self.num_consecutive_frames = 10
-        self.predicting_letter = None
-
-    def process(self, image):
+    def process(image):
 
         image.flags.writeable = False
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        results = self.hands.process(image)
+        results = hands.process(image)
         # Draw the hand annotations on the image.
         image.flags.writeable = True
 
@@ -127,12 +119,12 @@ class VideoProcessor:
 
         if results.multi_hand_landmarks:
             for hand_landmarks in results.multi_hand_landmarks:
-                self.mp_drawing.draw_landmarks(
+                mp_drawing.draw_landmarks(
                     image,
                     hand_landmarks,
-                    self.mp_hands.HAND_CONNECTIONS,
-                    self.mp_drawing_styles.get_default_hand_landmarks_style(),
-                    self.mp_drawing_styles.get_default_hand_connections_style())
+                    mp_hands.HAND_CONNECTIONS,
+                    mp_drawing_styles.get_default_hand_landmarks_style(),
+                    mp_drawing_styles.get_default_hand_connections_style())
 
             #for rectangle later
             H, W, _ = image.shape
@@ -153,17 +145,17 @@ class VideoProcessor:
 
 
             #predict and show prediction
-            coords_df = preproc_predict(image, {'mp_hands': self.mp_hands, 'hands': self.hands, 'results': results})
+            coords_df = preproc_predict(image, {'mp_hands': mp_hands, 'hands': hands, 'results': results})
             if coords_df is None:
                 pass
             else:
                 # pred = model.predict_proba(coords_df)
-                pred = self.model.predict(coords_df)
+                pred = model.predict(coords_df)
 
 
                 res = 'none' if pred is None else pred
 
-                self.predicting_letter = res[0].capitalize()
+                predicting_letter = res[0].capitalize()
 
                 # res = res[0].tolist()
                 # max_value = max(res)
@@ -195,6 +187,8 @@ class VideoProcessor:
     def recv(self, frame):
             img = frame.to_ndarray(format="bgr24")
             img = self.process(img)
+            with lock:
+                img_container["img"] = img
             return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 
@@ -212,10 +206,8 @@ def main():
                         max_num_hands=1,
                         min_detection_confidence=0.7)
     # load model
-    model = load_model_ml()
 
     # create instance of video stream with processing
-    video_processor = VideoProcessor(mp_drawing, mp_drawing_styles, mp_hands, hands, model)
 
     # Streamlit UI
     st.title("Letter Prediction")
@@ -227,10 +219,10 @@ def main():
         mode=WebRtcMode.SENDRECV,
         rtc_configuration=RTC_CONFIGURATION,
         media_stream_constraints={"video": True, "audio": False},
-        video_processor_factory=lambda: video_processor,
         async_processing=True,
-        video_frame_callback=video_frame_callback,
+        # video_frame_callback=video_frame_callback,
         )
+
     predictions_list = []
     counter = 0
     result = st.empty()
