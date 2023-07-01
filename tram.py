@@ -80,13 +80,13 @@ SAVE YOUR MODEL TO BQ
 
 
 
-#model = tf.keras.models.load_model('models/model_de_la_muerte')
-#save_model(model, ml=False, model_name="merged_cnn_transformer_1")
+model = load_model_ml('model.model_base_testing')
+save_model(model, ml=True, model_name="model_base_testing")
 
 
 #dl_model = load_model(ml=False, model_name="merged_cnn_transformer_1")
 
 # ml_model = load_model(ml=True, model_name="random_forest_1", timestamp="20230629-193635")
-ml_model = load_model(ml=True, model_name="random_forest_1")
+#ml_model = load_model(ml=True, model_name="random_forest_1")
 
-print(ml_model)
+#print(ml_model)
