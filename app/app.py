@@ -137,15 +137,15 @@ def most_common(lst):
 
 def main():
 
-    RTC_CONFIGURATION = RTCConfiguration(
-    {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
-    )
+    # RTC_CONFIGURATION = RTCConfiguration(
+    # {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
+    # )
 
     # Use this one for prod
-    # RTC_CONFIGURATION = {
-    #     "iceServers": get_ice_servers(),
-    #     "iceTransportPolicy": "relay",
-    # }
+    RTC_CONFIGURATION = {
+        "iceServers": get_ice_servers(),
+        "iceTransportPolicy": "relay",
+    }
 
     #Variables
     goal = random_letter()
