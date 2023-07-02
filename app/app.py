@@ -6,7 +6,7 @@ import av
 from streamlit_webrtc import webrtc_streamer, WebRtcMode, RTCConfiguration
 from game import random_letter
 # import ipdb
-from data_proc import preproc_predict
+# from data_proc import preproc_predict
 import threading
 from registry import load_model
 # import urllib.parse
