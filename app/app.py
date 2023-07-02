@@ -8,7 +8,7 @@ from game import random_letter
 # import ipdb
 # from data_proc import preproc_predict
 import threading
-from registry import load_model
+# from registry import load_model
 # import urllib.parse
 import time
 import os
