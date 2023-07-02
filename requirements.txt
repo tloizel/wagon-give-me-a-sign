@@ -21,6 +21,7 @@ xgboost
 
 #our project
 opencv-python
+opencv-python-headless
 joblib
 #opencv-python-headless
 altair<5
