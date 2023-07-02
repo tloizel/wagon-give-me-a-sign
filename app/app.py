@@ -132,9 +132,9 @@ def most_common(lst):
 
 def main():
 
-    RTC_CONFIGURATION = RTCConfiguration(
-    {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
-    )
+    # RTC_CONFIGURATION = RTCConfiguration(
+    # {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
+    # )
 
     #Variables
     goal = random_letter()
@@ -159,7 +159,9 @@ def main():
         ctx = webrtc_streamer(
             key="WYH",
             mode=WebRtcMode.SENDRECV,
-            rtc_configuration=RTC_CONFIGURATION,
+            rtc_configuration={  # Add this config
+                "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+            },
             media_stream_constraints={"video": True, "audio": False},
             async_processing=True,
             video_frame_callback=video_frame_callback,
