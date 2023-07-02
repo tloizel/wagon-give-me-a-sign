@@ -25,7 +25,7 @@ joblib
 #opencv-python-headless
 altair<5
 mediapipe==0.10.1
-streamlit==1.13.0
+streamlit==1.23.0
 watchdog
 streamlit-webrtc
 gcsfs
