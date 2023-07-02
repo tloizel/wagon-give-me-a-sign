@@ -10,8 +10,6 @@ import threading
 import time
 import os
 
-# import queue
-
 import sys
 sys.path.append("./")  # Add the root directory to the Python path
 from registry import load_model
@@ -23,7 +21,6 @@ from twilio_server import get_ice_servers
 lock = threading.Lock()
 img_container = {"img": None}
 
-# prediction_queue = queue.Queue()
 
 @st.cache_resource()
 def define_hands():
