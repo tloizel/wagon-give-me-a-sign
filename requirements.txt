@@ -20,15 +20,19 @@ protobuf
 xgboost
 
 #our project
-opencv-python
+# opencv-python
 joblib
 #opencv-python-headless
 altair<5
 mediapipe==0.10.1
 streamlit==1.24.0
 watchdog
-streamlit-webrtc
+# streamlit-webrtc
 gcsfs
+
+opencv-python-headless==4.7.0.72
+streamlit_webrtc==0.45.1
+twilio~=8.4.0
 
 
 # Trick to install the version of Tensorflow depending on your processor: darwin == Mac, ARM == M1

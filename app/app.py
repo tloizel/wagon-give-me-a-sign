@@ -20,13 +20,17 @@ from game import random_letter
 lock = threading.Lock()
 img_container = {"img": None}
 
-# load hands
-mp_drawing = mp.solutions.drawing_utils
-mp_drawing_styles = mp.solutions.drawing_styles
-mp_hands = mp.solutions.hands
-hands = mp_hands.Hands(static_image_mode=False,
-                    max_num_hands=1,
-                    min_detection_confidence=0.7)
+@st.cache_resource()
+def define_hands():
+    mp_drawing = mp.solutions.drawing_utils
+    mp_drawing_styles = mp.solutions.drawing_styles
+    mp_hands = mp.solutions.hands
+    hands = mp_hands.Hands(static_image_mode=False,
+                        max_num_hands=1,
+                        min_detection_confidence=0.7)
+    return mp_drawing, mp_drawing_styles, mp_hands, hands
+
+mp_drawing, mp_drawing_styles, mp_hands, hands = define_hands()
 
 
 @st.cache_data()
@@ -34,7 +38,6 @@ def patience_while_i_load_the_model():
     # Load and return the model
     # return load_model(ml=True, model_name='random_forest_1')
     return load_model(ml=True, model_name='model_base_testing')
-
 
 # model = load_model(ml=True, model_name='random_forest_1')
 # model = load_model_ml()
@@ -132,13 +135,13 @@ def most_common(lst):
 
 def main():
 
-    # RTC_CONFIGURATION = RTCConfiguration(
-    # {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
-    # )
+    RTC_CONFIGURATION = RTCConfiguration(
+    {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
+    )
 
-    RTC_CONFIGURATION = {  # Add this config
-                "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
-            }
+    # RTC_CONFIGURATION = {  # Add this config
+    #             "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+    #         }
 
     #Variables
     goal = random_letter()
