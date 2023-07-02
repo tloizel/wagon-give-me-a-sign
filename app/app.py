@@ -18,16 +18,11 @@ from game import random_letter
 from twilio_server import get_ice_servers
 
 
-# Initialize st.session_state if it doesn't exist
-if 'initialized' not in st.session_state:
-    st.session_state.initialized = True
-    # Initialize other session-specific state variables if needed
-    st.session_state.my_variable = 0
-
 lock = threading.Lock()
 img_container = {"img": None}
 
-# @st.cache_resource()
+
+@st.cache_resource()
 def define_hands():
     mp_drawing = mp.solutions.drawing_utils
     mp_drawing_styles = mp.solutions.drawing_styles
@@ -40,7 +35,7 @@ def define_hands():
 mp_drawing, mp_drawing_styles, mp_hands, hands = define_hands()
 
 
-# @st.cache_data()
+@st.cache_data()
 def patience_while_i_load_the_model():
     # Load and return the model
     # return load_model(ml=True, model_name='random_forest_1')
@@ -142,14 +137,15 @@ def most_common(lst):
 
 def main():
 
-    # RTC_CONFIGURATION = RTCConfiguration(
-    # {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
-    # )
+    RTC_CONFIGURATION = RTCConfiguration(
+    {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
+    )
 
-    RTC_CONFIGURATION = {
-        "iceServers": get_ice_servers(),
-        "iceTransportPolicy": "relay",
-    }
+    # Use this one for prod
+    # RTC_CONFIGURATION = {
+    #     "iceServers": get_ice_servers(),
+    #     "iceTransportPolicy": "relay",
+    # }
 
     #Variables
     goal = random_letter()
