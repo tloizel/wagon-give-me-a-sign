@@ -1,14 +1,14 @@
 import logging
-import os
+# import os
 
-import streamlit as st
+# import streamlit as st
 from params import *
 from twilio.rest import Client
 
 logger = logging.getLogger(__name__)
 
 
-@st.cache_data
+# @st.cache_data
 def get_ice_servers():
     """Use Twilio's TURN server because Streamlit Community Cloud has changed
     its infrastructure and WebRTC connection cannot be established without TURN server now.  # noqa: E501
