@@ -191,7 +191,7 @@ def main():
             if pred is None:
                 continue
 
-            image_path = os.path.join('asl', goal + ".png")
+            image_path = f"https://raw.githubusercontent.com/tloizel/wagon-give-me-a-sign/master/asl/{goal.lower()}.png"
             hint_image.image(image_path, width=200)
             result_text.text(f"You are doing a {pred}")
             predictions_list.append(pred)
