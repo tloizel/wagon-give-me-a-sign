@@ -15,6 +15,7 @@ sys.path.append("./")  # Add the root directory to the Python path
 from registry import load_model
 from data_proc import preproc_predict
 from game import random_letter
+from twilio_server import get_ice_servers
 
 
 lock = threading.Lock()
@@ -135,13 +136,14 @@ def most_common(lst):
 
 def main():
 
-    RTC_CONFIGURATION = RTCConfiguration(
-    {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
-    )
+    # RTC_CONFIGURATION = RTCConfiguration(
+    # {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
+    # )
 
-    # RTC_CONFIGURATION = {  # Add this config
-    #             "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
-    #         }
+    RTC_CONFIGURATION = {
+        "iceServers": get_ice_servers(),
+        "iceTransportPolicy": "relay",
+    }
 
     #Variables
     goal = random_letter()
