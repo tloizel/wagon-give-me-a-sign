@@ -10,3 +10,4 @@ csv/
 csv
 .pyc
 secrets.toml
+app/__pycache__/
