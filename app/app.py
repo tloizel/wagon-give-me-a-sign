@@ -136,6 +136,10 @@ def main():
     # {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
     # )
 
+    RTC_CONFIGURATION = {  # Add this config
+                "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+            }
+
     #Variables
     goal = random_letter()
     predictions_list = []
@@ -159,9 +163,7 @@ def main():
         ctx = webrtc_streamer(
             key="WYH",
             mode=WebRtcMode.SENDRECV,
-            rtc_configuration={  # Add this config
-                "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
-            },
+            rtc_configuration=RTC_CONFIGURATION,
             media_stream_constraints={"video": True, "audio": False},
             async_processing=True,
             video_frame_callback=video_frame_callback,
