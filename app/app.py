@@ -1,3 +1,6 @@
+import sys
+sys.path.append("..")  # Add the root directory to the Python path
+
 import streamlit as st
 import cv2
 import mediapipe as mp
