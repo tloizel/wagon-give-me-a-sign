@@ -1,6 +1,3 @@
-import sys
-sys.path.append("..")  # Add the root directory to the Python path
-
 import streamlit as st
 import cv2
 import mediapipe as mp
@@ -9,13 +6,15 @@ import av
 from streamlit_webrtc import webrtc_streamer, WebRtcMode, RTCConfiguration
 from game import random_letter
 # import ipdb
-from data_proc import preproc_predict
 import threading
-from registry import load_model
 # import urllib.parse
 import time
 import os
 
+import sys
+sys.path.append("..")  # Add the root directory to the Python path
+from registry import load_model
+from data_proc import preproc_predict
 
 
 lock = threading.Lock()
