@@ -4,17 +4,17 @@ import mediapipe as mp
 # from model import load_model_ml, predict_model_ml
 import av
 from streamlit_webrtc import webrtc_streamer, WebRtcMode, RTCConfiguration
-from game import random_letter
 # import ipdb
 import threading
 # import urllib.parse
 import time
 import os
 
-# import sys
-# sys.path.append("..")  # Add the root directory to the Python path
+import sys
+sys.path.append("..")  # Add the root directory to the Python path
 from registry import load_model
 from data_proc import preproc_predict
+from game import random_letter
 
 
 lock = threading.Lock()
