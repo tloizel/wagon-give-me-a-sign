@@ -1,6 +1,6 @@
 # wheel
 # nbresult
-# colorama
+colorama
 ipdb
 # ipykernel
 # yapf
