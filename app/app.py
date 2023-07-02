@@ -21,7 +21,7 @@ from twilio_server import get_ice_servers
 lock = threading.Lock()
 img_container = {"img": None}
 
-@st.cache_resource()
+# @st.cache_resource()
 def define_hands():
     mp_drawing = mp.solutions.drawing_utils
     mp_drawing_styles = mp.solutions.drawing_styles
