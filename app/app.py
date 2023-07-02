@@ -11,7 +11,7 @@ import time
 import os
 
 import sys
-sys.path.append("..")  # Add the root directory to the Python path
+sys.path.append("./")  # Add the root directory to the Python path
 from registry import load_model
 from data_proc import preproc_predict
 from game import random_letter
