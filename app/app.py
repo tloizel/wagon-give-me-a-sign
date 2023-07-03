@@ -137,7 +137,6 @@ def most_common(lst):
     return max(set(lst), key=lst.count)
 
 
-
 def main():
 
     # RTC_CONFIGURATION = RTCConfiguration(
@@ -171,7 +170,7 @@ def main():
 
         # Stream
         ctx = webrtc_streamer(
-            key="WYH",
+            key="learn",
             mode=WebRtcMode.SENDRECV,
             rtc_configuration=RTC_CONFIGURATION,
             media_stream_constraints={"video": True, "audio": False},
@@ -222,7 +221,7 @@ def main():
 
         # Stream
         ctx = webrtc_streamer(
-            key="WYH",
+            key="play",
             mode=WebRtcMode.SENDRECV,
             rtc_configuration=RTC_CONFIGURATION,
             media_stream_constraints={"video": True, "audio": False},
@@ -266,7 +265,6 @@ def main():
                         score_text.text(f'It took you {time_taken} seconds. Not bad 👌')
                         goal_text.text(f"You can do better though 🙃")
                         result_text.text(f"👆 Click to play again")
-
 
 
 
