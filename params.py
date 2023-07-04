@@ -14,6 +14,8 @@ PROJECT_ID = st.secrets["PROJECT_ID"]
 TABLE_ID = st.secrets["TABLE_ID"]
 MODEL_TARGET = st.secrets["MODEL_TARGET"]
 BUCKET_NAME = st.secrets["BUCKET_NAME"]
+TWILIO_ACCOUNT_SID = st.secrets['TWILIO_ACCOUNT_SID']
+TWILIO_AUTH_TOKEN = st.secrets['TWILIO_AUTH_TOKEN']
 
 
 GCP_SERVICE_ACCOUNT = service_account.Credentials.from_service_account_info(st.secrets['connections']['gcs'])

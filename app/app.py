@@ -4,27 +4,35 @@ import mediapipe as mp
 # from model import load_model_ml, predict_model_ml
 import av
 from streamlit_webrtc import webrtc_streamer, WebRtcMode, RTCConfiguration
-from game import random_letter
 # import ipdb
-from data_proc import preproc_predict
 import threading
-from registry import load_model
 # import urllib.parse
 import time
 import os
 
+import sys
+sys.path.append("./")  # Add the root directory to the Python path
+from registry import load_model
+from data_proc import preproc_predict
+from game import random_letter
+from twilio_server import get_ice_servers
 
 
 lock = threading.Lock()
 img_container = {"img": None}
 
-# load hands
-mp_drawing = mp.solutions.drawing_utils
-mp_drawing_styles = mp.solutions.drawing_styles
-mp_hands = mp.solutions.hands
-hands = mp_hands.Hands(static_image_mode=False,
-                    max_num_hands=1,
-                    min_detection_confidence=0.7)
+
+@st.cache_resource()
+def define_hands():
+    mp_drawing = mp.solutions.drawing_utils
+    mp_drawing_styles = mp.solutions.drawing_styles
+    mp_hands = mp.solutions.hands
+    hands = mp_hands.Hands(static_image_mode=False,
+                        max_num_hands=1,
+                        min_detection_confidence=0.7)
+    return mp_drawing, mp_drawing_styles, mp_hands, hands
+
+mp_drawing, mp_drawing_styles, mp_hands, hands = define_hands()
 
 
 @st.cache_data()
@@ -32,7 +40,6 @@ def patience_while_i_load_the_model():
     # Load and return the model
     # return load_model(ml=True, model_name='random_forest_1')
     return load_model(ml=True, model_name='model_base_testing')
-
 
 # model = load_model(ml=True, model_name='random_forest_1')
 # model = load_model_ml()
@@ -44,10 +51,13 @@ def video_frame_callback(frame):
     with lock:
         img_container["img"] = img
     img = process(img)[0]
-    return av.VideoFrame.from_ndarray(img, format="bgr24")
-
+    stream = av.VideoFrame.from_ndarray(img, format="bgr24")
+    return stream
 
 def process(image):
+
+    # with lock:
+    #     image = img_container["img"]
 
     image.flags.writeable = False
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -127,12 +137,17 @@ def most_common(lst):
     return max(set(lst), key=lst.count)
 
 
-
 def main():
 
-    RTC_CONFIGURATION = RTCConfiguration(
-    {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
-    )
+    # RTC_CONFIGURATION = RTCConfiguration(
+    # {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
+    # )
+
+    # Use this one for prod
+    RTC_CONFIGURATION = {
+        "iceServers": get_ice_servers(),
+        "iceTransportPolicy": "relay",
+    }
 
     #Variables
     goal = random_letter()
@@ -154,8 +169,8 @@ def main():
         hint_image = st.empty()
 
         # Stream
-        ctx = webrtc_streamer(
-            key="WYH",
+        ctx1 = webrtc_streamer(
+            key="learn",
             mode=WebRtcMode.SENDRECV,
             rtc_configuration=RTC_CONFIGURATION,
             media_stream_constraints={"video": True, "audio": False},
@@ -167,7 +182,7 @@ def main():
         result_text.text(f"👆 Click to start learning")
 
 
-        while ctx.state.playing:
+        while ctx1.state.playing:
             with lock:
                 img = img_container["img"]
             if img is None:
@@ -178,7 +193,7 @@ def main():
             if pred is None:
                 continue
 
-            image_path = os.path.join('asl', goal + ".png")
+            image_path = f"https://raw.githubusercontent.com/tloizel/wagon-give-me-a-sign/master/asl/{goal.lower()}.png"
             hint_image.image(image_path, width=200)
             result_text.text(f"You are doing a {pred}")
             predictions_list.append(pred)
@@ -205,8 +220,8 @@ def main():
 
 
         # Stream
-        ctx = webrtc_streamer(
-            key="WYH",
+        ctx2 = webrtc_streamer(
+            key="play",
             mode=WebRtcMode.SENDRECV,
             rtc_configuration=RTC_CONFIGURATION,
             media_stream_constraints={"video": True, "audio": False},
@@ -218,7 +233,7 @@ def main():
         result_text.text(f"👆 Click to start the clock")
 
 
-        while ctx.state.playing and score < win:
+        while ctx2.state.playing and score < win:
             with lock:
                 img = img_container["img"]
             if img is None:
@@ -250,7 +265,6 @@ def main():
                         score_text.text(f'It took you {time_taken} seconds. Not bad 👌')
                         goal_text.text(f"You can do better though 🙃")
                         result_text.text(f"👆 Click to play again")
-
 
 
 
