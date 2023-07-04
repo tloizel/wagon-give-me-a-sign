@@ -51,13 +51,13 @@ def video_frame_callback(frame):
     with lock:
         img_container["img"] = img
     img = process(img)[0]
-    return av.VideoFrame.from_ndarray(img, format="bgr24")
-
+    stream = av.VideoFrame.from_ndarray(img, format="bgr24")
+    return stream
 
 def process(image):
 
-    with lock:
-        image = img_container["img"]
+    # with lock:
+    #     image = img_container["img"]
 
     image.flags.writeable = False
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -169,7 +169,7 @@ def main():
         hint_image = st.empty()
 
         # Stream
-        ctx = webrtc_streamer(
+        ctx1 = webrtc_streamer(
             key="learn",
             mode=WebRtcMode.SENDRECV,
             rtc_configuration=RTC_CONFIGURATION,
@@ -182,7 +182,7 @@ def main():
         result_text.text(f"👆 Click to start learning")
 
 
-        while ctx.state.playing:
+        while ctx1.state.playing:
             with lock:
                 img = img_container["img"]
             if img is None:
@@ -220,7 +220,7 @@ def main():
 
 
         # Stream
-        ctx = webrtc_streamer(
+        ctx2 = webrtc_streamer(
             key="play",
             mode=WebRtcMode.SENDRECV,
             rtc_configuration=RTC_CONFIGURATION,
@@ -233,7 +233,7 @@ def main():
         result_text.text(f"👆 Click to start the clock")
 
 
-        while ctx.state.playing and score < win:
+        while ctx2.state.playing and score < win:
             with lock:
                 img = img_container["img"]
             if img is None:

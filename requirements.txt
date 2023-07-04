@@ -23,7 +23,7 @@ xgboost
 opencv-python
 joblib
 # opencv-python-headless
-altair<5
+altair
 mediapipe==0.10.1
 streamlit==1.23.0
 watchdog
