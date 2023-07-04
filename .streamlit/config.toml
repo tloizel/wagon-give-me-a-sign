@@ -18,4 +18,4 @@ base = "light"
 # textColor =
 
 # Font family for all text in the app, except code blocks. One of "sans serif", "serif", or "monospace".
-# font =
+font = "monospace"
