@@ -12,10 +12,10 @@ def collection():
     if not os.path.exists(DATA_DIR):
         os.makedirs(DATA_DIR)
 
-    alphabet = list(string.ascii_lowercase)
-    alphabet.extend(['space', 'back', 'love', 'fuck'])
+    #alphabet = list(string.ascii_lowercase)
+    alphabet = ['back']
 
-    dataset_size = 1000 #each of us should do 100, 400 in total per letter
+    dataset_size = 2000 #each of us should do 100, 400 in total per letter
 
     cap = cv2.VideoCapture(0)
     for j in alphabet:

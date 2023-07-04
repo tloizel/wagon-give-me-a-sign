@@ -4,11 +4,8 @@ import mediapipe as mp
 # from model import load_model_ml, predict_model_ml
 import av
 from streamlit_webrtc import webrtc_streamer, WebRtcMode, RTCConfiguration
-# import ipdb
 import threading
-# import urllib.parse
 import time
-import os
 
 import sys
 sys.path.append("./")  # Add the root directory to the Python path
@@ -53,6 +50,7 @@ def video_frame_callback(frame):
     img = process(img)[0]
     stream = av.VideoFrame.from_ndarray(img, format="bgr24")
     return stream
+
 
 def process(image):
 
@@ -153,119 +151,53 @@ def main():
     goal = random_letter()
     predictions_list = []
     counter = 0
-    score = 0
-    win = 3
-
 
     # Streamlit UI
     st.title("Fingerspelling 🤌")
-
-    direction = st.radio("You're here to", ('learn 🧠', 'play 😏'))
-
-    if direction == 'learn 🧠':
-
-        goal_text = st.empty()
-        goal_text.text(f"Show us the letter {goal}")
-        hint_image = st.empty()
-
-        # Stream
-        ctx1 = webrtc_streamer(
-            key="learn",
-            mode=WebRtcMode.SENDRECV,
-            rtc_configuration=RTC_CONFIGURATION,
-            media_stream_constraints={"video": True, "audio": False},
-            async_processing=True,
-            video_frame_callback=video_frame_callback,
-            )
-
-        result_text = st.empty()
-        result_text.text(f"👆 Click to start learning")
+    st.write("You're here to learn 😏")
 
 
-        while ctx1.state.playing:
-            with lock:
-                img = img_container["img"]
-            if img is None:
-                continue
+    goal_text = st.empty()
+    goal_text.text(f"Show us the letter {goal}")
+    hint_image = st.empty()
 
-            pred = process(img)[1]
+    # Stream
+    ctx1 = webrtc_streamer(
+        key="learn",
+        mode=WebRtcMode.SENDRECV,
+        rtc_configuration=RTC_CONFIGURATION,
+        media_stream_constraints={"video": True, "audio": False},
+        async_processing=True,
+        video_frame_callback=video_frame_callback,
+        )
 
-            if pred is None:
-                continue
-
-            image_path = f"https://raw.githubusercontent.com/tloizel/wagon-give-me-a-sign/master/asl/{goal.lower()}.png"
-            hint_image.image(image_path, width=200)
-            result_text.text(f"You are doing a {pred}")
-            predictions_list.append(pred)
-            counter += 1
-            if counter == 10:
-                letter = most_common(predictions_list)
-                predictions_list = []
-                counter = 0
-                if letter == goal :
-                    goal = random_letter()
-                    goal_text.text(f"Show us the letter {goal}")
+    result_text = st.empty()
+    result_text.text(f"👆 Click to start learning")
 
 
-    else:
+    while ctx1.state.playing:
+        with lock:
+            img = img_container["img"]
+        if img is None:
+            continue
 
-        start_time = time.time()  # Record the start time
+        pred = process(img)[1]
 
-        bar = st.progress(0)
-        score_text = st.empty()
-        score_text.text(f"Fastest time to get {win} letters wins 🏆")
+        if pred is None:
+            continue
 
-        goal_text = st.empty()
-        goal_text.text(f"Show us the letter {goal}")
-
-
-        # Stream
-        ctx2 = webrtc_streamer(
-            key="play",
-            mode=WebRtcMode.SENDRECV,
-            rtc_configuration=RTC_CONFIGURATION,
-            media_stream_constraints={"video": True, "audio": False},
-            async_processing=True,
-            video_frame_callback=video_frame_callback,
-            )
-
-        result_text = st.empty()
-        result_text.text(f"👆 Click to start the clock")
-
-
-        while ctx2.state.playing and score < win:
-            with lock:
-                img = img_container["img"]
-            if img is None:
-                continue
-
-            pred = process(img)[1]
-
-            if pred is None:
-                continue
-
-
-            result_text.text(f"You are doing a {pred}")
-            score_text.text(f"Score {score}")
-            predictions_list.append(pred)
-            counter += 1
-            if counter == 10:
-                letter = most_common(predictions_list)
-                predictions_list = []
-                counter = 0
-                if letter == goal :
-                    goal = random_letter()
-                    score += 1
-                    bar.progress(round(score*100/win))
-                    goal_text.text(f"Show us the letter {goal}")
-                    if score == win:
-                        st.balloons()
-                        end_time = time.time()  # Record the end time
-                        time_taken = round(end_time - start_time, 2)  # Calculate the time taken
-                        score_text.text(f'It took you {time_taken} seconds. Not bad 👌')
-                        goal_text.text(f"You can do better though 🙃")
-                        result_text.text(f"👆 Click to play again")
-
+        image_path = f"https://raw.githubusercontent.com/tloizel/wagon-give-me-a-sign/master/asl/{goal.lower()}.png"
+        hint_image.image(image_path, width=200)
+        result_text.text("")
+        predictions_list.append(pred)
+        counter += 1
+        if counter == 10:
+            letter = most_common(predictions_list)
+            predictions_list = []
+            counter = 0
+            if letter == goal :
+                goal = random_letter()
+                goal_text.text(f"Show us the letter {goal}")
 
 
 
