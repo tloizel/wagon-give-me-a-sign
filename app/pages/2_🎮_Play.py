@@ -156,17 +156,22 @@ def main():
 
     # Streamlit UI
     st.title("Fingerspelling 🤌")
+    st.write("Let the fastest fingers win")
 
-    st.write("You're here to play 😏")
+    st.write("")
+    st.write("")
 
     start_time = time.time()  # Record the start time
 
     bar = st.progress(0)
     score_text = st.empty()
-    score_text.text(f"Fastest time to get {win} letters wins 🏆")
+    score_text.write(f"Fastest time to get {win} letters wins 🏆")
+
+    st.write("")
+    st.write("")
 
     goal_text = st.empty()
-    goal_text.text(f"Show us the letter {goal}")
+    goal_text.write(f"Show us the letter **{goal}**")
 
 
     # Stream
@@ -180,7 +185,7 @@ def main():
         )
 
     result_text = st.empty()
-    result_text.text(f"👆 Click to start the clock")
+    result_text.write(f"👆 Click to start the clock")
 
 
     while ctx2.state.playing and score < win:
@@ -195,8 +200,8 @@ def main():
             continue
 
 
-        result_text.text("")
-        score_text.text(f"Score {score}")
+        result_text.write("")
+        score_text.write(f"Score {score}")
         predictions_list.append(pred)
         counter += 1
         if counter == 10:
@@ -207,14 +212,14 @@ def main():
                 goal = random_letter()
                 score += 1
                 bar.progress(round(score*100/win))
-                goal_text.text(f"Show us the letter {goal}")
+                goal_text.write(f"Show us the letter {goal}")
                 if score == win:
                     st.balloons()
                     end_time = time.time()  # Record the end time
                     time_taken = round(end_time - start_time, 2)  # Calculate the time taken
-                    score_text.text(f'It took you {time_taken} seconds. Not bad 👌')
-                    goal_text.text(f"You can do better though 🙃")
-                    result_text.text(f"👆 Click to play again")
+                    score_text.write(f'It took you {time_taken} seconds. Not bad 👌')
+                    goal_text.write(f"You can do better though 🙃")
+                    result_text.write(f"👆 Click to play again")
 
 
 if __name__ == "__main__":

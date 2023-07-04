@@ -12,8 +12,8 @@ def collection():
     if not os.path.exists(DATA_DIR):
         os.makedirs(DATA_DIR)
 
-    #alphabet = list(string.ascii_lowercase)
-    alphabet = ['back']
+    alphabet = list(string.ascii_lowercase)
+    alphabet.extend(['fuck', 'love', 'space', 'back'])
 
     dataset_size = 2000 #each of us should do 100, 400 in total per letter
 

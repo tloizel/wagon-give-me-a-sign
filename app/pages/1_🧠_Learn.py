@@ -153,12 +153,15 @@ def main():
     counter = 0
 
     # Streamlit UI
-    st.title("Fingerspelling 🤌")
-    st.write("You're here to learn 😏")
+    st.title("Learn 🧠")
+    st.write("Time to get familiar with the alphabet")
+
+    st.write("")
+    st.write("")
 
 
     goal_text = st.empty()
-    goal_text.text(f"Show us the letter {goal}")
+    goal_text.write(f"Show us the letter **{goal}**")
     hint_image = st.empty()
 
     # Stream
@@ -172,7 +175,7 @@ def main():
         )
 
     result_text = st.empty()
-    result_text.text(f"👆 Click to start learning")
+    result_text.write(f"👆 Click to start learning")
 
 
     while ctx1.state.playing:
@@ -188,7 +191,7 @@ def main():
 
         image_path = f"https://raw.githubusercontent.com/tloizel/wagon-give-me-a-sign/master/asl/{goal.lower()}.png"
         hint_image.image(image_path, width=200)
-        result_text.text("")
+        result_text.write("")
         predictions_list.append(pred)
         counter += 1
         if counter == 10:
@@ -197,7 +200,7 @@ def main():
             counter = 0
             if letter == goal :
                 goal = random_letter()
-                goal_text.text(f"Show us the letter {goal}")
+                goal_text.write(f"Show us the letter {goal}")
 
 
 
