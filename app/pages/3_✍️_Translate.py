@@ -5,7 +5,7 @@ import mediapipe as mp
 import av
 from streamlit_webrtc import webrtc_streamer, WebRtcMode, RTCConfiguration
 import threading
-import time
+# import time
 
 import sys
 sys.path.append("./")  # Add the root directory to the Python path
@@ -159,6 +159,8 @@ def main():
 
     st.text("You're here to Translate 😏")
 
+    # speed = st.slider('Select your speed from 🐌 to ⚡️', 0, 100, 60, step=10)
+
     st.text(f"Give me a sign")
 
     # Stream
@@ -178,6 +180,7 @@ def main():
     sentence = []
 
     while ctx3.state.playing:
+        # speed = st.empty()
         with lock:
             img = img_container["img"]
         if img is None:
@@ -187,17 +190,18 @@ def main():
 
         if pred is None:
             continue
-
+        # speed.text("")
         result_text.text("")
         predictions_list.append(pred)
         counter += 1
-        if counter == 50:
+        # if counter == int(110 - speed):
+        if counter == 60:
             letter = most_common(predictions_list)
-            predictions_list = []
-            counter = 0
             if letter != "No hand":
                 sentence.append(letter)
             translation.text(f'{"".join(sentence)}')
+            counter = 0
+            predictions_list = []
 
 
 if __name__ == "__main__":
