@@ -2,12 +2,12 @@ import streamlit as st
 
 st.write("")
 
-st.title("Fingerspeller 🤌")
+st.title("Fingerspell 🤌")
 
 st.write("")
 
 st.write("Welcome to American Sign Language (ASL) fingerspelling.")
-st.write("Where you'll let you fingers to the talking 🤟")
+st.write("Where you'll let your fingers do the talking 🤟")
 
 st.write("")
 st.write("")

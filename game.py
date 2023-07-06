@@ -8,14 +8,18 @@ def random_letter():
     random_letter = random.choice(alphabet)
     return random_letter
 
-def countdown_timer(countdown_text, duration):
-    start_time = time.time()
-    end_time = start_time + duration
 
-    while time.time() < end_time:
-        remaining_time = int(end_time - time.time())
-        countdown_text.text(f"Countdown: {remaining_time} seconds")
-        time.sleep(1)
+def translate_words(pred):
+    if pred == "love":
+        return 'Thank you LeWagon'
+    if pred == "fuck":
+        return "Let's not be rude"
+    if pred == "space":
+        return "No letter"
+    if pred == "back":
+        return "No letter"
+    else:
+        return pred
 
 
 
