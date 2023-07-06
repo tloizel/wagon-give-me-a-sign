@@ -5,7 +5,7 @@ import mediapipe as mp
 import av
 from streamlit_webrtc import webrtc_streamer, WebRtcMode, RTCConfiguration
 import threading
-# import time
+import time
 
 import sys
 sys.path.append("./")  # Add the root directory to the Python path
