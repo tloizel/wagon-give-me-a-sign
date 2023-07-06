@@ -11,7 +11,7 @@ import sys
 sys.path.append("./")  # Add the root directory to the Python path
 from registry import load_model
 from data_proc import preproc_predict
-from game import random_letter
+from game import random_letter, translate_words
 from twilio_server import get_ice_servers
 
 
@@ -111,8 +111,8 @@ def process(image):
 
             # if max_value>0.90:
             if res is not None:
-                # answer = f"{ALPHABET[max_index].capitalize()} ({round(max_value,2)*100}%)"
-                answer = res[0].capitalize()
+                # answer = f"{translate_words(res[0]).capitalize()} ({round(max_value,2)*100}%)"
+                answer = translate_words(res[0]).capitalize()
 
             else:
                 answer = "No letter"
@@ -121,10 +121,10 @@ def process(image):
         cv2.putText(image,
                     answer,
                     (x1, y1 - 10),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    1.3,
+                    cv2.FONT_HERSHEY_PLAIN,
+                    2,
                     (0, 0, 0),
-                    3,
+                    2,
                     cv2.LINE_AA)
 
     return image, answer
@@ -151,11 +151,11 @@ def main():
     predictions_list = []
     counter = 0
     score = 0
-    win = 3
+    win = 10
 
 
     # Streamlit UI
-    st.title("Fingerspelling 🤌")
+    st.title("Play 🎮")
     st.write("Let the fastest fingers win")
 
     st.write("")
@@ -171,7 +171,7 @@ def main():
     st.write("")
 
     goal_text = st.empty()
-    goal_text.write(f"Show us the letter **{goal}**")
+    goal_text.write(f"Show us the letter 👀")
 
 
     # Stream
@@ -199,7 +199,7 @@ def main():
         if pred is None:
             continue
 
-
+        goal_text.write(f"Show us the letter **{goal}**")
         result_text.write("")
         score_text.write(f"Score {score}")
         predictions_list.append(pred)
@@ -212,7 +212,7 @@ def main():
                 goal = random_letter()
                 score += 1
                 bar.progress(round(score*100/win))
-                goal_text.write(f"Show us the letter {goal}")
+                goal_text.write(f"Show us the letter **{goal}**")
                 if score == win:
                     st.balloons()
                     end_time = time.time()  # Record the end time

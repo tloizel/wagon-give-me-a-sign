@@ -11,7 +11,7 @@ import sys
 sys.path.append("./")  # Add the root directory to the Python path
 from registry import load_model
 from data_proc import preproc_predict
-from game import random_letter
+from game import random_letter, translate_words
 from twilio_server import get_ice_servers
 
 
@@ -112,8 +112,8 @@ def process(image):
 
             # if max_value>0.90:
             if res is not None:
-                # answer = f"{ALPHABET[max_index].capitalize()} ({round(max_value,2)*100}%)"
-                answer = res[0].capitalize()
+                # answer = f"{translate_words(res[0]).capitalize()} ({round(max_value,2)*100}%)"
+                answer = translate_words(res[0]).capitalize()
 
             else:
                 answer = "No letter"
@@ -122,10 +122,10 @@ def process(image):
         cv2.putText(image,
                     answer,
                     (x1, y1 - 10),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    1.3,
+                    cv2.FONT_HERSHEY_PLAIN,
+                    2,
                     (0, 0, 0),
-                    3,
+                    2,
                     cv2.LINE_AA)
 
     return image, answer
@@ -133,6 +133,8 @@ def process(image):
 
 def most_common(lst):
     return max(set(lst), key=lst.count)
+
+
 
 
 def main():
@@ -148,7 +150,7 @@ def main():
     }
 
     #Variables
-    goal = random_letter()
+    goal = 'A'
     predictions_list = []
     counter = 0
 
@@ -200,7 +202,7 @@ def main():
             counter = 0
             if letter == goal :
                 goal = random_letter()
-                goal_text.write(f"Show us the letter {goal}")
+                goal_text.write(f"Show us the letter **{goal}**")
 
 
 
