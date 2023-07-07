@@ -7,7 +7,7 @@ import string
 ALPHABET = list(string.ascii_lowercase)
 
 ALPHABET_EXTRA = ALPHABET
-ALPHABET_EXTRA.extend(['back', 'fuck', 'love', 'space'])
+ALPHABET_EXTRA.extend(['fuck', 'love', 'space', 'back'])
 
 
 def process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
