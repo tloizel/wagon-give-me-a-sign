@@ -2,8 +2,7 @@ import random
 import time
 
 def random_letter():
-    alphabet = 'ABC'
-    # alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
     random_letter = random.choice(alphabet)
     return random_letter
@@ -11,7 +10,7 @@ def random_letter():
 
 def translate_words(pred):
     if pred == "love":
-        return 'Thank you LeWagon'
+        return 'Thank you @lewagon'
     if pred == "fuck":
         return "Let's not be rude"
     if pred == "space":

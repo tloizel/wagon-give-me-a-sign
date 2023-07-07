@@ -1,6 +1,13 @@
 import cv2
 from data_proc import preproc_predict
 from game import translate_words
+import ipdb
+import string
+
+ALPHABET = list(string.ascii_lowercase)
+
+ALPHABET_EXTRA = ALPHABET
+ALPHABET_EXTRA.extend(['back', 'fuck', 'love', 'space'])
 
 
 def process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
@@ -16,7 +23,8 @@ def process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
 
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-    answer = 'No hand'
+    answer = 'No letter'
+    text = 'No letter'
 
     if results.multi_hand_landmarks:
         for hand_landmarks in results.multi_hand_landmarks:
@@ -48,38 +56,27 @@ def process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
         #predict and show prediction
         coords_df = preproc_predict(image, {'mp_hands': mp_hands, 'hands': hands, 'results': results})
 
-        if coords_df is None:
-            pass
-        else:
-            # pred = model.predict_proba(coords_df)
-            pred = model.predict(coords_df)
+        pred = model.predict_proba(coords_df)
+
+        pred = pred[0].tolist()
+        max_value = max(pred)
+        max_index = pred.index(max_value)
+
+        if max_value>0.50 and pred is not None:
+            answer = translate_words(ALPHABET_EXTRA[max_index]).capitalize()
+            text = f"{answer} ({round(max_value,2)*100}%)"
+            # answer = f"{translate_words(pred[0]).capitalize()} ({round(max_value,2)*100}%)"
 
 
-            res = 'none' if pred is None else pred
-
-            # res = res[0].tolist()
-            # max_value = max(res)
-            # max_index = res.index(max_value)
-
-            # if max_value>0.90:
-            if res is not None:
-                # answer = f"{translate_words(res[0]).capitalize()} ({round(max_value,2)*100}%)"
-                answer = translate_words(res[0]).capitalize()
-
-            else:
-                answer = "No letter"
-
-        # Draw the background rectangle with white color
+        # Draw the background rectangle with transparency
         overlay = image.copy()
-
         cv2.rectangle(image, (x1, y1-8), (x2, y1 - 34), (255, 255, 255), -1)
-
         alpha = 0.3
-
         image = cv2.addWeighted(overlay, alpha, image, 1 - alpha, 0)
 
+
         cv2.putText(image,
-                    answer,
+                    text,
                     (x1+5, y1 - 10),
                     cv2.FONT_HERSHEY_PLAIN,
                     2,
