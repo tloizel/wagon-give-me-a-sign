@@ -1,24 +1,19 @@
 import streamlit as st
-import cv2
 import mediapipe as mp
-# from model import load_model_ml, predict_model_ml
 import av
-from streamlit_webrtc import webrtc_streamer, WebRtcMode, RTCConfiguration
+from streamlit_webrtc import webrtc_streamer, WebRtcMode
 import threading
-import time
 
 import sys
-sys.path.append("./")  # Add the root directory to the Python path
+sys.path.append("./")  # dd the root directory to the Python path
 from registry import load_model
-from data_proc import preproc_predict
-from game import random_letter, translate_words
+from game import random_letter
 from twilio_server import get_ice_servers
-
 from image_processing import process, most_common
 
 
-lock = threading.Lock()
-img_container = {"img": None}
+lock1 = threading.Lock()
+img_container1 = {"img": None}
 
 
 @st.cache_resource()
@@ -38,7 +33,7 @@ mp_drawing, mp_drawing_styles, mp_hands, hands = define_hands()
 def patience_while_i_load_the_model():
     # Load and return the model
     # return load_model(ml=True, model_name='random_forest_1')
-    return load_model(ml=True, model_name='model_base_testing')
+    return load_model(ml=True, model_name='RandomForestClassifier()')
 
 # model = load_model(ml=True, model_name='random_forest_1')
 # model = load_model_ml()
@@ -47,8 +42,8 @@ model = patience_while_i_load_the_model()
 
 def video_frame_callback(frame):
     img = frame.to_ndarray(format="bgr24")
-    with lock:
-        img_container["img"] = img
+    with lock1:
+        img_container1["img"] = img
     img = process(img, mp_drawing, mp_drawing_styles, mp_hands, hands, model)[0]
     stream = av.VideoFrame.from_ndarray(img, format="bgr24")
     return stream
@@ -103,15 +98,12 @@ def main():
 
 
     while ctx1.state.playing:
-        with lock:
-            img = img_container["img"]
+        with lock1:
+            img = img_container1["img"]
         if img is None:
             continue
 
         pred = process(img, mp_drawing, mp_drawing_styles, mp_hands, hands, model)[1]
-
-        if pred is None:
-            continue
 
         image_path = f"https://raw.githubusercontent.com/tloizel/wagon-give-me-a-sign/master/asl/{goal.lower()}.png"
         hint_image.image(image_path, width=200)
