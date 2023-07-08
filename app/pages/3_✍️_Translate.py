@@ -106,9 +106,8 @@ def main():
         # if counter == int(110 - speed):
         if counter == 60:
             letter = most_common(predictions_list)
-            if letter == "Delete":
-                if len(sentence) >=1:
-                    sentence.pop()
+            if letter == "Delete" and len(sentence) >=1 :
+                sentence.pop()
             elif letter == "Space":
                 sentence.append(" ")
             elif letter != "No letter":
