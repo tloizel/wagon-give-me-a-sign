@@ -7,33 +7,14 @@ from threading import Lock
 
 import sys
 sys.path.append("./")  # Add the root directory to the Python path
-from registry import load_model
-from image_processing import process, most_common
 from twilio_server import get_ice_servers
+from image_processing import process, most_common, define_hands, patience_while_i_load_the_model
 
 
 lock3 = Lock()
 img_container3 = {"img": None}
 
-
-@st.cache_resource(ttl=3600, max_entries=100)
-def define_hands():
-    mp_drawing = mp.solutions.drawing_utils
-    mp_drawing_styles = mp.solutions.drawing_styles
-    mp_hands = mp.solutions.hands
-    hands = mp_hands.Hands(static_image_mode=False,
-                        max_num_hands=1,
-                        min_detection_confidence=0.7)
-    return mp_drawing, mp_drawing_styles, mp_hands, hands
-
 mp_drawing, mp_drawing_styles, mp_hands, hands = define_hands()
-
-
-@st.cache_data(ttl=3600, max_entries=100)
-def patience_while_i_load_the_model():
-    # Load and return the model
-    # return load_model(ml=True, model_name='random_forest_1')
-    return load_model(ml=True, model_name='SVC(probability=True)', timestamp="20230708-124111")
 
 # model = load_model(ml=True, model_name='random_forest_1')
 # model = load_model_ml()

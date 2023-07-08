@@ -22,7 +22,7 @@ EXPOSE 8501
 
 HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
 
-ENTRYPOINT ["streamlit", "run", "app/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+ENTRYPOINT ["streamlit", "run", "app/0_👋_Welcome.py", "--server.port=8501", "--server.address=0.0.0.0"]
 
 # Define the command to run the application when the container starts
 # CMD streamlit run app/app.py
