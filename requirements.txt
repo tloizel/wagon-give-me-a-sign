@@ -2,9 +2,9 @@
 
 # Our project 👀
 # opencv-python-headless
-# gcsfs
-# altair
-# watchdog
+gcsfs
+altair
+watchdog
 opencv-python
 joblib
 mediapipe==0.10.1
