@@ -107,7 +107,7 @@ def main():
             letter = most_common(predictions_list)
             if letter != "No letter":
                 sentence.append(letter)
-            translation.write(f'{"".join(sentence)}')
+            translation.write(f'{"".join(sentence).capitalize()}')
             counter = 0
             predictions_list = []
 
