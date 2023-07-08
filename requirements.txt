@@ -16,6 +16,7 @@ colorama
 numpy==1.23.5
 pandas==1.5.3
 google-cloud-storage
+scikit-learn==1.2.1
 
 # commmented for Streamlit 🚨
 # # Trick to install the version of Tensorflow depending on your processor: darwin == Mac, ARM == M1
@@ -26,7 +27,6 @@ google-cloud-storage
 # xgboost
 # ipdb
 # scipy==1.10.0
-# scikit-learn==1.2.1
 # db-dtypes
 # pyarrow
 # protobuf
