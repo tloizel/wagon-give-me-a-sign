@@ -67,9 +67,16 @@ def main():
 
 
     # Streamlit UI
-    st.title("Fingerspelling 🤌")
+    st.title("Translate ✍️")
 
-    st.text("Let your fingers do the talking")
+    st.write("Let your fingers do the talking")
+
+    st.write("")
+    st.write("Good to know :")
+    st.write("   🖐️ for space")
+    st.write("   👍 (to the left) to delete")
+
+
 
     # speed = st.slider('Select your speed from 🐌 to ⚡️', 0, 100, 60, step=10)
 
