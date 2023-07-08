@@ -34,7 +34,7 @@ mp_drawing, mp_drawing_styles, mp_hands, hands = define_hands()
 def patience_while_i_load_the_model():
     # Load and return the model
     # return load_model(ml=True, model_name='random_forest_1')
-    return load_model(ml=True, model_name='RandomForestClassifier()')
+    return load_model(ml=True, model_name='SVC(probability=True)')
 
 # model = load_model(ml=True, model_name='random_forest_1')
 # model = load_model_ml()
