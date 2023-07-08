@@ -77,7 +77,6 @@ def main():
     st.write("   👍 (to the left) to delete")
 
 
-
     # speed = st.slider('Select your speed from 🐌 to ⚡️', 0, 100, 60, step=10)
 
     # Stream
@@ -93,7 +92,15 @@ def main():
     result_text = st.empty()
     result_text.write(f"👆 Click to start translating")
 
-    translation = st.empty()
+    translation = st.markdown(
+     f"""
+    <div style="background-color: #ffcc0336; padding: 10px">
+        <p style="margin:0px;">Your text will appear here 👀</p>
+    </div>
+    """,
+    unsafe_allow_html=True
+    )
+
     sentence = []
 
     while ctx3.state.playing:
@@ -119,7 +126,26 @@ def main():
                 sentence.append(" ")
             elif letter != "No letter":
                 sentence.append(letter)
-            translation.write(f'{"".join(sentence).capitalize()}')
+
+            if sentence == []:
+                translation.markdown(
+                f"""
+                <div style="background-color: #ffcc0336; padding: 10px">
+                    <p style="margin:0px;">Your text will appear here 👀</p>
+                </div>
+                """,
+                unsafe_allow_html=True
+                )
+            else:
+                translation.markdown(
+                f"""
+                <div style="background-color: #ffcc0336; padding: 10px">
+                    <p style="margin:0px;">{"".join(sentence).capitalize()}</p>
+                </div>
+                """,
+                unsafe_allow_html=True
+                )
+            # translation.write(f'{"".join(sentence).capitalize()}')
             counter = 0
             predictions_list = []
 
