@@ -4,7 +4,6 @@ from game import translate_words
 from string import ascii_lowercase
 
 ALPHABET = list(ascii_lowercase)
-
 ALPHABET_EXTRA = ALPHABET
 ALPHABET_EXTRA.extend(['fuck', 'love', 'space', 'back'])
 ALPHABET_EXTRA.sort()

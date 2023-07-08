@@ -14,9 +14,9 @@ def translate_words(pred):
     if pred == "fuck":
         return "Let's not be rude"
     if pred == "space":
-        return "No letter"
+        return "Space"
     if pred == "back":
-        return "No letter"
+        return "Delete"
     else:
         return pred
 

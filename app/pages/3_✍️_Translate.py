@@ -69,11 +69,9 @@ def main():
     # Streamlit UI
     st.title("Fingerspelling 🤌")
 
-    st.text("You're here to Translate 😏")
+    st.text("Let your fingers do the talking")
 
-    # speed = st.slider('Select your speed from 🐌 to ⚡️', 0, 100, 60, step=10)
-
-    st.text(f"Give me a sign")
+    speed = st.slider('Select your speed from 🐌 to ⚡️', 0, 100, 60, step=10)
 
     # Stream
     ctx3 = webrtc_streamer(
@@ -86,13 +84,14 @@ def main():
         )
 
     result_text = st.empty()
-    result_text.text(f"👆 Click to start translating")
+    result_text.write(f"👆 Click to start translating")
 
     translation = st.empty()
     sentence = []
 
     while ctx3.state.playing:
-        # speed = st.empty()
+        speed = st.empty()
+
         with lock3:
             img = img_container3["img"]
         if img is None:
@@ -100,16 +99,15 @@ def main():
 
         pred = process(img, mp_drawing, mp_drawing_styles, mp_hands, hands, model)[1]
 
-        # speed.text("")
-        result_text.text("")
+        speed.write("")
+        result_text.write("")
         predictions_list.append(pred)
         counter += 1
-        # if counter == int(110 - speed):
-        if counter == 60:
+        if counter == int(110 - speed):
             letter = most_common(predictions_list)
-            if letter != "No hand":
+            if letter != "No letter":
                 sentence.append(letter)
-            translation.text(f'{"".join(sentence)}')
+            translation.write(f'{"".join(sentence)}')
             counter = 0
             predictions_list = []
 
