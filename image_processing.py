@@ -3,6 +3,8 @@ from data_proc import preproc_predict
 from game import translate_words
 from string import ascii_lowercase
 import streamlit as st
+import mediapipe as mp
+from registry import load_model
 
 
 @st.cache_data(ttl=3600, max_entries=100)
@@ -14,6 +16,25 @@ def characters():
     return ALPHABET_EXTRA
 
 ALPHABET_EXTRA = characters()
+
+# @st.cache_resource(ttl=3600, max_entries=1)
+def define_hands():
+    mp_drawing = mp.solutions.drawing_utils
+    mp_drawing_styles = mp.solutions.drawing_styles
+    mp_hands = mp.solutions.hands
+    hands = mp_hands.Hands(static_image_mode=False,
+                        max_num_hands=1,
+                        min_detection_confidence=0.7)
+    return mp_drawing, mp_drawing_styles, mp_hands, hands
+
+
+@st.cache_data(ttl=3600, max_entries=1)
+def patience_while_i_load_the_model():
+    # Load and return the model
+    # return load_model(ml=True, model_name='random_forest_1')
+    return load_model(ml=True, model_name='SVC(probability=True)', timestamp="20230708-124111")
+
+
 
 
 def process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
