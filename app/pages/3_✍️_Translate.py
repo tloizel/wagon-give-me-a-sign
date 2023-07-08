@@ -1,14 +1,13 @@
 import streamlit as st
 import mediapipe as mp
-# from model import load_model_ml, predict_model_ml
 import av
 from streamlit_webrtc import webrtc_streamer, WebRtcMode
 from threading import Lock
 
-import sys
-sys.path.append("./")  # Add the root directory to the Python path
+from sys import path
+path.append("./")  # Add the root directory to the Python path
 from twilio_server import get_ice_servers
-from image_processing import process, most_common, define_hands, patience_while_i_load_the_model
+from image_processing import image_process, most_common, define_hands, patience_while_i_load_the_model
 
 
 lock3 = Lock()
@@ -25,7 +24,7 @@ def video_frame_callback(frame):
     img = frame.to_ndarray(format="bgr24")
     with lock3:
         img_container3["img"] = img
-    img = process(img, mp_drawing, mp_drawing_styles, mp_hands, hands, model)[0]
+    img = image_process(img, mp_drawing, mp_drawing_styles, mp_hands, hands, model)[0]
     stream = av.VideoFrame.from_ndarray(img, format="bgr24")
     return stream
 
@@ -92,7 +91,7 @@ def main():
         if img is None:
             continue
 
-        pred = process(img, mp_drawing, mp_drawing_styles, mp_hands, hands, model)[1]
+        pred = image_process(img, mp_drawing, mp_drawing_styles, mp_hands, hands, model)[1]
 
         result_text.write("Writing 👇")
         predictions_list.append(pred)

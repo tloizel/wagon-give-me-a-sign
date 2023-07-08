@@ -7,7 +7,7 @@ import mediapipe as mp
 from registry import load_model
 
 
-@st.cache_data(ttl=3600, max_entries=100)
+@st.cache_data(ttl=3600, max_entries=1)
 def characters():
     ALPHABET = list(ascii_lowercase)
     ALPHABET_EXTRA = ALPHABET
@@ -36,8 +36,7 @@ def patience_while_i_load_the_model():
 
 
 
-
-def process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
+def image_process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
 
     # with lock:
     #     image = img_container["img"]
