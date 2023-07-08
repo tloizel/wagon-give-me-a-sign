@@ -1,14 +1,15 @@
-from load_from_bq import load_from_bq
+# from load_from_bq import load_from_bq
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from data_extraction import get_coordinates
-import ipdb
+# from sklearn.model_selection import train_test_split
+# from data_extraction import get_coordinates
+# import ipdb
 
 
 
-df = load_from_bq()
+# df = load_from_bq()
 
 def balance_df(df):
+
     if len(df.groupby('target')['target'].count().unique()) > 1:
         print("Not balanced")
         print(df.groupby('target')['target'].count().unique())
@@ -27,6 +28,7 @@ def balance_df(df):
     return balanced_df
 
 def shuffle_targets(df):
+
     shuffled_df = pd.DataFrame()
     for letter in df['target'].unique():
         sub_df = df[df['target']==letter]
@@ -37,6 +39,8 @@ def shuffle_targets(df):
     return shuffled_df
 
 def train_test_df(df, test_size=0.3, random_state=42):
+
+    from sklearn.model_selection import train_test_split
 
     df = df.reset_index(drop=True)
 
@@ -85,6 +89,7 @@ def preproc(df, test_size=0.3, random_state=42):
 
 
 def preproc_predict(image, processed_hand_dict):
+    from data_extraction import get_coordinates
     """
     Get coords
     Remove the first three columns x_0, y_0, z_0
