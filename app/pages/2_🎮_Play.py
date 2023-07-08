@@ -1,5 +1,5 @@
 import streamlit as st
-import mediapipe as mp
+# import mediapipe as mp
 import av
 from streamlit_webrtc import webrtc_streamer, WebRtcMode
 from threading import Lock
