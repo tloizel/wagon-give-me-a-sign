@@ -5,7 +5,7 @@ from streamlit_webrtc import webrtc_streamer, WebRtcMode
 import threading
 
 import sys
-sys.path.append("./")  # Add the root directory to the Python path
+sys.path.append("./")  # dd the root directory to the Python path
 from registry import load_model
 from game import random_letter
 from twilio_server import get_ice_servers
