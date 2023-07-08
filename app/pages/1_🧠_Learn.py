@@ -2,7 +2,7 @@ import streamlit as st
 import mediapipe as mp
 import av
 from streamlit_webrtc import webrtc_streamer, WebRtcMode
-import threading
+from threading import Lock
 
 import sys
 sys.path.append("./")  # dd the root directory to the Python path
@@ -12,7 +12,7 @@ from twilio_server import get_ice_servers
 from image_processing import process, most_common
 
 
-lock1 = threading.Lock()
+lock1 = Lock()
 img_container1 = {"img": None}
 
 

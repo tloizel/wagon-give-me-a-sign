@@ -1,10 +1,9 @@
-import cv2
+from cv2 import cvtColor, COLOR_BGR2RGB, COLOR_RGB2BGR, rectangle, addWeighted, putText, FONT_HERSHEY_PLAIN, LINE_AA
 from data_proc import preproc_predict
 from game import translate_words
-import ipdb
-import string
+from string import ascii_lowercase
 
-ALPHABET = list(string.ascii_lowercase)
+ALPHABET = list(ascii_lowercase)
 ALPHABET_EXTRA = ALPHABET
 ALPHABET_EXTRA.extend(['fuck', 'love', 'space', 'back'])
 ALPHABET_EXTRA.sort()
@@ -16,12 +15,12 @@ def process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
     #     image = img_container["img"]
 
     image.flags.writeable = False
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    image = cvtColor(image, COLOR_BGR2RGB)
     results = hands.process(image)
     # Draw the hand annotations on the image.
     image.flags.writeable = True
 
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+    image = cvtColor(image, COLOR_RGB2BGR)
 
     answer = 'No letter'
     text = 'No letter'
@@ -50,7 +49,7 @@ def process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
         y1 = int(min(y_) * H) - 10
         x2 = int(max(x_) * W) + 10
         y2 = int(max(y_) * H) + 10
-        cv2.rectangle(image, (x1, y1), (x2, y2), (0, 0, 0), 2)
+        rectangle(image, (x1, y1), (x2, y2), (0, 0, 0), 2)
 
 
         #predict and show prediction
@@ -70,19 +69,19 @@ def process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
 
         # Draw the background rectangle with transparency
         overlay = image.copy()
-        cv2.rectangle(image, (x1, y1-8), (x2, y1 - 34), (255, 255, 255), -1)
+        rectangle(image, (x1, y1-8), (x2, y1 - 34), (255, 255, 255), -1)
         alpha = 0.3
-        image = cv2.addWeighted(overlay, alpha, image, 1 - alpha, 0)
+        image = addWeighted(overlay, alpha, image, 1 - alpha, 0)
 
 
-        cv2.putText(image,
+        putText(image,
                     text,
                     (x1+5, y1 - 10),
-                    cv2.FONT_HERSHEY_PLAIN,
+                    FONT_HERSHEY_PLAIN,
                     2,
                     (0, 0, 0),
                     2,
-                    cv2.LINE_AA)
+                    LINE_AA)
 
     return image, answer
 

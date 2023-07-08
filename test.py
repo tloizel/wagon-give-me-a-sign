@@ -4,11 +4,12 @@ from model import load_model_ml
 import pandas as pd
 from data_proc import preproc_predict
 import ipdb
-from tensorflow.keras.models import load_model
+#from tensorflow.keras.models import load_model
 import string
+from registry import load_model
 ALPHABET = list(string.ascii_lowercase)
 
-model = load_model_ml('ML_test_gcs_2/20230627-220647.h5')
+model = load_model(ml=True, model_name='RandomForestClassifier()')
 
 #load model
 
@@ -128,10 +129,14 @@ while cap.isOpened():
             print(res)
 
             res = res[0].tolist()
+            print(len(res))
             max_value = max(res)
             max_index = res.index(max_value)
             #if max_value>0.80:
-            answer = f"{ALPHABET[max_index].capitalize()} ({round(max_value,2)*100}%)"
+            ALPHABET_EXTRA = ALPHABET
+            ALPHABET_EXTRA.extend(['fuck', 'love', 'space', 'back'])
+            ALPHABET_EXTRA.sort()
+            answer = f"{ALPHABET_EXTRA[max_index].capitalize()} ({round(max_value,2)*100}%)"
             #else:
              #   answer = "No letter"
 
