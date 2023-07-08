@@ -2,18 +2,18 @@ import streamlit as st
 import mediapipe as mp
 import av
 from streamlit_webrtc import webrtc_streamer, WebRtcMode
-import threading
-import time
+from threading import Lock
+from time import time
 
-import sys
-sys.path.append("./")  # Add the root directory to the Python path
+from sys import path
+path.append("./")  # Add the root directory to the Python path
 from registry import load_model
 from game import random_letter
 from twilio_server import get_ice_servers
 from image_processing import process, most_common
 
 
-lock2 = threading.Lock()
+lock2 = Lock()
 img_container2 = {"img": None}
 
 
@@ -77,7 +77,7 @@ def main():
     st.write("")
     st.write("")
 
-    start_time = time.time()  # Record the start time
+    start_time = time()  # Record the start time
 
     bar = st.progress(0)
     score_text = st.empty()
@@ -128,7 +128,7 @@ def main():
                 goal_text.write(f"Show us the letter **{goal}**")
                 if score == win:
                     st.balloons()
-                    end_time = time.time()  # Record the end time
+                    end_time = time()  # Record the end time
                     time_taken = round(end_time - start_time, 2)  # Calculate the time taken
                     score_text.write(f'It took you {time_taken} seconds. Not bad 👌')
                     goal_text.write(f"You can do better though 🙃")
