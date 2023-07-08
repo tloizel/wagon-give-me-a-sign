@@ -2,11 +2,18 @@ from cv2 import cvtColor, COLOR_BGR2RGB, COLOR_RGB2BGR, rectangle, addWeighted, 
 from data_proc import preproc_predict
 from game import translate_words
 from string import ascii_lowercase
+import streamlit as st
 
-ALPHABET = list(ascii_lowercase)
-ALPHABET_EXTRA = ALPHABET
-ALPHABET_EXTRA.extend(['fuck', 'love', 'space', 'back'])
-ALPHABET_EXTRA.sort()
+
+@st.cache_data(ttl=3600, max_entries=100)
+def characters():
+    ALPHABET = list(ascii_lowercase)
+    ALPHABET_EXTRA = ALPHABET
+    ALPHABET_EXTRA.extend(['fuck', 'love', 'space', 'back'])
+    ALPHABET_EXTRA.sort()
+    return ALPHABET_EXTRA
+
+ALPHABET_EXTRA = characters()
 
 
 def process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
@@ -63,7 +70,7 @@ def process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
 
         if max_value>0.50 and pred is not None:
             answer = translate_words(ALPHABET_EXTRA[max_index]).capitalize()
-            text = f"{answer} ({round(max_value,2)*100}%)"
+            text = f"{answer} ({round(max_value*100)}%)"
             # answer = f"{translate_words(pred[0]).capitalize()} ({round(max_value,2)*100}%)"
 
 

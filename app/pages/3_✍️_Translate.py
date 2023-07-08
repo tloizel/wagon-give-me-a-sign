@@ -16,7 +16,7 @@ lock3 = Lock()
 img_container3 = {"img": None}
 
 
-@st.cache_resource()
+@st.cache_resource(ttl=3600, max_entries=100)
 def define_hands():
     mp_drawing = mp.solutions.drawing_utils
     mp_drawing_styles = mp.solutions.drawing_styles
@@ -29,7 +29,7 @@ def define_hands():
 mp_drawing, mp_drawing_styles, mp_hands, hands = define_hands()
 
 
-@st.cache_data()
+@st.cache_data(ttl=3600, max_entries=100)
 def patience_while_i_load_the_model():
     # Load and return the model
     # return load_model(ml=True, model_name='random_forest_1')
