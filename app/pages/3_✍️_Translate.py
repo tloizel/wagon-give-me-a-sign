@@ -73,11 +73,12 @@ def main():
 
     st.write("")
     st.write("Good to know :")
-    st.write("   🖐️ for space")
-    st.write("   👍 (to the left) to delete")
+    st.write("🖐️ for space")
+    st.write("👍 (to the left) to delete")
 
+    st.write("")
+    speed = st.slider('Select your speed from 🐌 to ⚡️', 0, 100, 50, step=10)
 
-    # speed = st.slider('Select your speed from 🐌 to ⚡️', 0, 100, 60, step=10)
 
     # Stream
     ctx3 = webrtc_streamer(
@@ -104,7 +105,6 @@ def main():
     sentence = []
 
     while ctx3.state.playing:
-        # speed = st.empty()
 
         with lock3:
             img = img_container3["img"]
@@ -113,12 +113,11 @@ def main():
 
         pred = process(img, mp_drawing, mp_drawing_styles, mp_hands, hands, model)[1]
 
-        # speed.write("")
-        result_text.write("")
+        result_text.write("Writing 👇")
         predictions_list.append(pred)
         counter += 1
-        # if counter == int(110 - speed):
-        if counter == 60:
+        if counter == int(130 - speed):
+        # if counter == 60:
             letter = most_common(predictions_list)
             if letter == "Delete" and len(sentence) >=1 :
                 sentence.pop()
