@@ -1,53 +1,43 @@
-# wheel
-# nbresult
-colorama
-ipdb
-# ipykernel
-# yapf
-# matplotlib
-# pygeohash
-# pytest
-# seaborn
-numpy==1.23.5
-pandas==1.5.3
-scipy==1.10.0
-scikit-learn==1.2.1
-google-cloud-bigquery
-google-cloud-storage
-db-dtypes
-pyarrow
-protobuf
-xgboost
 
-#our project
+
+# Our project 👀
+# opencv-python-headless
+# gcsfs
+# altair
+# watchdog
 opencv-python
 joblib
-# opencv-python-headless
-altair
 mediapipe==0.10.1
 streamlit==1.23.0
-watchdog
-# streamlit-webrtc
-gcsfs
-
-
 opencv-python-headless==4.7.0.72
 streamlit_webrtc==0.45.1
 twilio~=8.4.0
+colorama
+numpy==1.23.5
+pandas==1.5.3
+google-cloud-storage
+
+# commmented for Streamlit 🚨
+# # Trick to install the version of Tensorflow depending on your processor: darwin == Mac, ARM == M1
+# tensorflow-macos==2.13.0rc1; sys_platform == 'darwin' and 'ARM' in platform_version # Mac M-chips
+# tensorflow==2.13.0rc1; sys_platform == 'darwin' and 'ARM' not in platform_version # Mac Intel chips
+# tensorflow==2.13.0rc1; sys_platform != 'darwin' # Windows & Ubuntu Intel chips
+# # prevent bq 3+ db-dtypes package error when running training from bq
+# xgboost
+# ipdb
+# scipy==1.10.0
+# scikit-learn==1.2.1
+# db-dtypes
+# pyarrow
+# protobuf
+# python-dotenv
+# google-cloud-bigquery
 
 
-# Trick to install the version of Tensorflow depending on your processor: darwin == Mac, ARM == M1
-tensorflow-macos==2.13.0rc1; sys_platform == 'darwin' and 'ARM' in platform_version # Mac M-chips
-tensorflow==2.13.0rc1; sys_platform == 'darwin' and 'ARM' not in platform_version # Mac Intel chips
-tensorflow==2.13.0rc1; sys_platform != 'darwin' # Windows & Ubuntu Intel chips
-# prevent bq 3+ db-dtypes package error when running training from bq
-
+# To delete 🗑️
 # mlflow==2.1.1
-
-python-dotenv
 # prefect==2.8.1
 # psycopg2-binary
-
 # # API
 # fastapi
 # pytz
@@ -55,3 +45,11 @@ python-dotenv
 # # tests
 # httpx
 # pytest-asyncio
+# ipykernel
+# yapf
+# matplotlib
+# pygeohash
+# pytest
+# seaborn
+# wheel
+# nbresult
