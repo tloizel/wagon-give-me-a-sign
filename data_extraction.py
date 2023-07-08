@@ -1,10 +1,10 @@
-import os
+# import os
 import mediapipe as mp
-import cv2
-import matplotlib.pyplot as plt
+from cv2 import imread, cvtColor, COLOR_BGR2RGB
+# import matplotlib.pyplot as plt
 import pandas as pd
-import ipdb
-import numpy as np
+# import ipdb
+# import numpy as np
 
 
 def get_coordinates(image, processed_hand_dict=None):
@@ -21,8 +21,8 @@ def get_coordinates(image, processed_hand_dict=None):
         results = processed_hand_dict['results']
     else:
         #from path, for collection
-        img = cv2.imread(image)
-        img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        img = imread(image)
+        img_rgb = cvtColor(img, COLOR_BGR2RGB)
 
         mp_hands = mp.solutions.hands
         hands = mp_hands.Hands(static_image_mode=True, min_detection_confidence=0.3)
@@ -55,6 +55,8 @@ def get_coordinates(image, processed_hand_dict=None):
 
 
 def get_coordinates_from_collection():
+    import os
+
     """
     Récupère toutes les coords des mains de raw_data et stocke dans un dataframe
     """
@@ -70,8 +72,8 @@ def get_coordinates_from_collection():
         for img_path in os.listdir(os.path.join(DATA_DIR, dir_)):
             img = os.path.join(DATA_DIR, dir_, img_path)
 
-            image = cv2.imread(img)
-            rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            image = imread(img)
+            rgb_image = cvtColor(image, COLOR_BGR2RGB)
             # Fait passer l'image à travers le modèle
             results = hands.process(rgb_image)
 
