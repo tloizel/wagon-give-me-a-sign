@@ -5,9 +5,9 @@ import ipdb
 import string
 
 ALPHABET = list(string.ascii_lowercase)
-
 ALPHABET_EXTRA = ALPHABET
 ALPHABET_EXTRA.extend(['fuck', 'love', 'space', 'back'])
+ALPHABET_EXTRA.sort()
 
 
 def process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
