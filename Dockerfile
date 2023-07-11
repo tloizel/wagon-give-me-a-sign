@@ -5,7 +5,7 @@ FROM python:3.10.6-slim-buster
 WORKDIR /app
 
 # Copy the requirements file to the working directory
-COPY requirements-docker.txt requirements.txt
+COPY requirements.txt requirements.txt
 
 # Copy the application code to the working directory
 COPY .streamlit .streamlit
