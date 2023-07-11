@@ -7,7 +7,7 @@ watchdog
 opencv-python
 joblib
 mediapipe==0.10.1
-streamlit==1.23.0
+streamlit==1.24.0
 opencv-python-headless==4.7.0.72
 streamlit_webrtc==0.45.1
 twilio~=8.4.0
