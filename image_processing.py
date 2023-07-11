@@ -80,7 +80,7 @@ def image_process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
         y1 = int(min(y_) * H) - 10
         x2 = int(max(x_) * W) + 10
         y2 = int(max(y_) * H) + 10
-        rectangle(image, (x1, y1), (x2, y2), (0, 0, 0), 2)
+        rectangle(image, (x1, y1), (x2, y2), (0, 0, 0), 1)
 
 
         #predict and show prediction
@@ -100,7 +100,7 @@ def image_process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
 
         # Draw the background rectangle with transparency
         overlay = image.copy()
-        rectangle(image, (x1, y1-8), (x2, y1 - 34), (255, 255, 255), -1)
+        rectangle(image, (x1, y1-6), (x2, y1 - 27), (255, 255, 255), -1)
         alpha = 0.3
         image = addWeighted(overlay, alpha, image, 1 - alpha, 0)
 
@@ -109,9 +109,9 @@ def image_process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
                     text,
                     (x1+5, y1 - 10),
                     FONT_HERSHEY_PLAIN,
-                    2,
+                    1.2,
                     (0, 0, 0),
-                    2,
+                    1,
                     LINE_AA)
 
     return image, answer
