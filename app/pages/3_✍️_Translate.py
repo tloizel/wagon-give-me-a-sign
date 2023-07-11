@@ -52,9 +52,10 @@ def main():
     st.write("Let your fingers do the talking")
 
     st.write("")
-    st.write("Good to know :")
-    st.write("🖐️ for space")
-    st.write("👍 (to the left) to delete")
+
+    with st.expander("Some tips 👀"):
+        st.write("🖐️ for space")
+        st.write("👍 (to the left) to delete")
 
     st.write("")
     speed = st.slider('Select your speed from 🐌 to ⚡️', 0, 100, 50, step=10)
