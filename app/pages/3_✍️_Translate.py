@@ -9,6 +9,7 @@ path.append("./")  # Add the root directory to the Python path
 from twilio_server import get_ice_servers
 from image_processing import image_process, most_common, define_hands, patience_while_i_load_the_model
 
+import gc
 
 lock3 = Lock()
 img_container3 = {"img": None}
@@ -129,6 +130,7 @@ def main():
             counter = 0
             predictions_list = []
 
+        gc.collect()
 
 if __name__ == "__main__":
     main()

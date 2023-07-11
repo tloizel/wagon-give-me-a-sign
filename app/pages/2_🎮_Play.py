@@ -11,6 +11,7 @@ from game import random_letter
 from twilio_server import get_ice_servers
 from image_processing import image_process, most_common, define_hands, patience_while_i_load_the_model
 
+import gc
 
 lock2 = Lock()
 img_container2 = {"img": None}
@@ -114,7 +115,7 @@ def main():
                     score_text.write(f'It took you {time_taken} seconds. Not bad 👌')
                     goal_text.write(f"You can do better though 🙃")
                     result_text.write(f"👆 Click to play again")
-
+        gc.collect()
 
 if __name__ == "__main__":
     main()
