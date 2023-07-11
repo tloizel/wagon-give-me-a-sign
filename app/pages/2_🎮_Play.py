@@ -15,7 +15,15 @@ from image_processing import image_process, most_common, define_hands, patience_
 lock2 = Lock()
 img_container2 = {"img": None}
 
-mp_drawing, mp_drawing_styles, mp_hands, hands = define_hands()
+if 'mp_drawing' not in st.session_state:
+    st.session_state['mp_drawing'], st.session_state['mp_drawing_styles'], st.session_state['mp_hands'], st.session_state['hands'] = define_hands()
+
+mp_drawing = st.session_state['mp_drawing']
+mp_drawing_styles = st.session_state['mp_drawing_styles']
+mp_hands = st.session_state['mp_hands']
+hands = st.session_state['hands']
+
+# mp_drawing, mp_drawing_styles, mp_hands, hands = define_hands()
 
 # model = load_model(ml=True, model_name='random_forest_1')
 # model = load_model_ml()
