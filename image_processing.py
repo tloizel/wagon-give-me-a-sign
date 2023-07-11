@@ -10,7 +10,7 @@ import threading
 lock = threading.Lock()
 
 
-@st.cache_data(ttl=3600, max_entries=1)
+@st.cache_data(ttl=1800, max_entries=1)
 def characters():
     ALPHABET = list(ascii_lowercase)
     ALPHABET_EXTRA = ALPHABET
@@ -20,7 +20,7 @@ def characters():
 
 ALPHABET_EXTRA = characters()
 
-# @st.cache_resource(ttl=3600, max_entries=1)
+# @st.cache_resource(ttl=1800, max_entries=1)
 def define_hands():
     mp_drawing = mp.solutions.drawing_utils
     mp_drawing_styles = mp.solutions.drawing_styles
@@ -31,7 +31,7 @@ def define_hands():
     return mp_drawing, mp_drawing_styles, mp_hands, hands
 
 
-@st.cache_data(ttl=3600, max_entries=1)
+@st.cache_data(ttl=1800, max_entries=1)
 def patience_while_i_load_the_model():
     # Load and return the model
     # return load_model(ml=True, model_name='random_forest_1')

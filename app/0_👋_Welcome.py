@@ -1,7 +1,7 @@
 import streamlit as st
 
 st.set_page_config(
-            page_title="Fingerspelling", # => Quick reference - Streamlit
+            page_title="Fingerspelling",
             page_icon="🤟")
 
 st.write("")
