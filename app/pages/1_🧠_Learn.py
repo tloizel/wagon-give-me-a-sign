@@ -10,12 +10,20 @@ from game import random_letter
 from twilio_server import get_ice_servers
 from image_processing import image_process, most_common, define_hands, patience_while_i_load_the_model
 
+import gc
+import ipdb
 
 
 lock1 = Lock()
 img_container1 = {"img": None}
 
-mp_drawing, mp_drawing_styles, mp_hands, hands = define_hands()
+if 'mp_drawing' not in st.session_state:
+    st.session_state['mp_drawing'], st.session_state['mp_drawing_styles'], st.session_state['mp_hands'], st.session_state['hands'] = define_hands()
+
+mp_drawing = st.session_state['mp_drawing']
+mp_drawing_styles = st.session_state['mp_drawing_styles']
+mp_hands = st.session_state['mp_hands']
+hands = st.session_state['hands']
 
 # model = load_model(ml=True, model_name='random_forest_1')
 # model = load_model_ml()
@@ -26,6 +34,7 @@ def video_frame_callback(frame):
     img = frame.to_ndarray(format="bgr24")
     with lock1:
         img_container1["img"] = img
+
     img = image_process(img, mp_drawing, mp_drawing_styles, mp_hands, hands, model)[0]
     stream = av.VideoFrame.from_ndarray(img, format="bgr24")
     return stream
@@ -99,7 +108,7 @@ def main():
             if letter == goal :
                 goal = random_letter()
                 goal_text.write(f"Show us the letter **{goal}**   👉")
-
+        gc.collect()
 
 
 if __name__ == "__main__":
