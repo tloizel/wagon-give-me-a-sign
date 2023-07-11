@@ -11,8 +11,6 @@ from twilio_server import get_ice_servers
 from image_processing import image_process, most_common, define_hands, patience_while_i_load_the_model
 
 import gc
-import ipdb
-
 
 lock1 = Lock()
 img_container1 = {"img": None}
