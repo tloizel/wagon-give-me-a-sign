@@ -10,7 +10,7 @@ from game import random_letter
 from twilio_server import get_ice_servers
 from image_processing import image_process, most_common, define_hands, patience_while_i_load_the_model
 
-import gc
+# import gc
 
 lock1 = Lock()
 img_container1 = {"img": None}
@@ -106,7 +106,7 @@ def main():
             if letter == goal :
                 goal = random_letter()
                 goal_text.write(f"Show us the letter **{goal}**   👉")
-        gc.collect()
+        # gc.collect()
 
 
 if __name__ == "__main__":
