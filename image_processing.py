@@ -5,6 +5,9 @@ from string import ascii_lowercase
 import streamlit as st
 import mediapipe as mp
 from registry import load_model
+import threading
+
+lock = threading.Lock()
 
 
 @st.cache_data(ttl=3600, max_entries=1)
@@ -43,10 +46,11 @@ def image_process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
 
     image.flags.writeable = False
     image = cvtColor(image, COLOR_BGR2RGB)
-    results = hands.process(image)
+    with lock:  # force running sequentially when multiple threads call this function simultaneously
+        results = hands.process(image)
+
     # Draw the hand annotations on the image.
     image.flags.writeable = True
-
     image = cvtColor(image, COLOR_RGB2BGR)
 
     answer = 'No letter'
