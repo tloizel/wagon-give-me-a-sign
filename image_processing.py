@@ -1,4 +1,4 @@
-from cv2 import cvtColor, COLOR_BGR2RGB, COLOR_RGB2BGR, rectangle, addWeighted, putText, FONT_HERSHEY_PLAIN, LINE_AA
+from cv2 import flip, cvtColor, COLOR_BGR2RGB, COLOR_RGB2BGR, rectangle, addWeighted, putText, FONT_HERSHEY_PLAIN, LINE_AA
 from data_proc import preproc_predict
 from game import translate_words
 from string import ascii_lowercase
@@ -8,7 +8,6 @@ from registry import load_model
 import threading
 
 lock = threading.Lock()
-
 
 @st.cache_data(ttl=1800, max_entries=1)
 def characters():
@@ -26,8 +25,8 @@ def define_hands():
     mp_drawing_styles = mp.solutions.drawing_styles
     mp_hands = mp.solutions.hands
     hands = mp_hands.Hands(static_image_mode=False,
-                        max_num_hands=1,
-                        min_detection_confidence=0.7)
+                        max_num_hands=2,
+                        min_detection_confidence=0.75)
     return mp_drawing, mp_drawing_styles, mp_hands, hands
 
 
@@ -41,9 +40,7 @@ def patience_while_i_load_the_model():
 
 def image_process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
 
-    # with lock:
-    #     image = img_container["img"]
-
+    image = flip(image,1)
     image.flags.writeable = False
     image = cvtColor(image, COLOR_BGR2RGB)
     with lock:  # force running sequentially when multiple threads call this function simultaneously
@@ -57,62 +54,64 @@ def image_process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
     text = 'No letter'
 
     if results.multi_hand_landmarks:
-        for hand_landmarks in results.multi_hand_landmarks:
-            mp_drawing.draw_landmarks(
-                image,
-                hand_landmarks,
-                mp_hands.HAND_CONNECTIONS,
-                mp_drawing_styles.get_default_hand_landmarks_style(),
-                mp_drawing_styles.get_default_hand_connections_style())
+        for hand_landmarks, handedness in zip(results.multi_hand_landmarks, results.multi_handedness):
+            if handedness.classification[0].label == 'Right':
 
-        #for rectangle later
-        H, W, _ = image.shape
-        x_ = []
-        y_ = []
-        for i in range(len(hand_landmarks.landmark)):
-            x = hand_landmarks.landmark[i].x
-            y = hand_landmarks.landmark[i].y
-            x_.append(x)
-            y_.append(y)
+                mp_drawing.draw_landmarks(
+                    image,
+                    hand_landmarks,
+                    mp_hands.HAND_CONNECTIONS,
+                    mp_drawing_styles.get_default_hand_landmarks_style(),
+                    mp_drawing_styles.get_default_hand_connections_style())
 
-        #draw rectangle around hand
-        x1 = int(min(x_) * W) - 10
-        y1 = int(min(y_) * H) - 10
-        x2 = int(max(x_) * W) + 10
-        y2 = int(max(y_) * H) + 10
-        rectangle(image, (x1, y1), (x2, y2), (0, 0, 0), 1)
+                #for rectangle later
+                H, W, _ = image.shape
+                x_ = []
+                y_ = []
+                for i in range(len(hand_landmarks.landmark)):
+                    x = hand_landmarks.landmark[i].x
+                    y = hand_landmarks.landmark[i].y
+                    x_.append(x)
+                    y_.append(y)
 
-
-        #predict and show prediction
-        coords_df = preproc_predict(image, {'mp_hands': mp_hands, 'hands': hands, 'results': results})
-
-        pred = model.predict_proba(coords_df)
-
-        pred = pred[0].tolist()
-        max_value = max(pred)
-        max_index = pred.index(max_value)
-
-        if max_value>0.50 and pred is not None:
-            answer = translate_words(ALPHABET_EXTRA[max_index]).capitalize()
-            text = f"{answer} ({round(max_value*100)}%)"
-            # answer = f"{translate_words(pred[0]).capitalize()} ({round(max_value,2)*100}%)"
+                #draw rectangle around hand
+                x1 = int(min(x_) * W) - 10
+                y1 = int(min(y_) * H) - 10
+                x2 = int(max(x_) * W) + 10
+                y2 = int(max(y_) * H) + 10
+                rectangle(image, (x1, y1), (x2, y2), (0, 0, 0), 1)
 
 
-        # Draw the background rectangle with transparency
-        overlay = image.copy()
-        rectangle(image, (x1, y1-6), (x2, y1 - 27), (255, 255, 255), -1)
-        alpha = 0.3
-        image = addWeighted(overlay, alpha, image, 1 - alpha, 0)
+                #predict and show prediction
+                coords_df = preproc_predict(image, {'mp_hands': mp_hands, 'hands': hands, 'results': hand_landmarks})
+
+                pred = model.predict_proba(coords_df)
+
+                pred = pred[0].tolist()
+                max_value = max(pred)
+                max_index = pred.index(max_value)
+
+                if max_value>0.50 and pred is not None:
+                    answer = translate_words(ALPHABET_EXTRA[max_index]).capitalize()
+                    text = f"{answer} ({round(max_value*100)}%)"
+                    # answer = f"{translate_words(pred[0]).capitalize()} ({round(max_value,2)*100}%)"
 
 
-        putText(image,
-                    text,
-                    (x1+5, y1 - 10),
-                    FONT_HERSHEY_PLAIN,
-                    1.2,
-                    (0, 0, 0),
-                    1,
-                    LINE_AA)
+                # Draw the background rectangle with transparency
+                overlay = image.copy()
+                rectangle(image, (x1, y1-6), (x2, y1 - 27), (255, 255, 255), -1)
+                alpha = 0.3
+                image = addWeighted(overlay, alpha, image, 1 - alpha, 0)
+
+
+                putText(image,
+                        text,
+                        (x1+5, y1 - 10),
+                        FONT_HERSHEY_PLAIN,
+                        1.2,
+                        (0, 0, 0),
+                        1,
+                        LINE_AA)
 
     return image, answer
 
