@@ -53,7 +53,6 @@ def image_process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
     answer = 'No letter'
     text = 'No letter'
 
-    # ipdb.set_trace()
     if results.multi_hand_landmarks and results.multi_handedness:
         for hand_landmarks, handedness in zip(results.multi_hand_landmarks, results.multi_handedness):
             if handedness.classification[0].label == 'Right':
