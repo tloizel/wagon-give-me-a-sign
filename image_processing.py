@@ -53,9 +53,10 @@ def image_process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
     answer = 'No letter'
     text = 'No letter'
 
-    if results.multi_hand_landmarks and results.multi_handedness:
+    if results.multi_hand_landmarks:
         for hand_landmarks, handedness in zip(results.multi_hand_landmarks, results.multi_handedness):
             if handedness.classification[0].label == 'Right':
+
                 mp_drawing.draw_landmarks(
                     image,
                     hand_landmarks,
@@ -82,7 +83,7 @@ def image_process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
 
 
                 #predict and show prediction
-                coords_df = preproc_predict(image, {'mp_hands': mp_hands, 'hands': hands, 'results': results})
+                coords_df = preproc_predict(image, {'mp_hands': mp_hands, 'hands': hands, 'results': hand_landmarks})
 
                 pred = model.predict_proba(coords_df)
 

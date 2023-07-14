@@ -3,7 +3,6 @@ import mediapipe as mp
 from cv2 import imread, cvtColor, COLOR_BGR2RGB
 # import matplotlib.pyplot as plt
 import pandas as pd
-# import ipdb
 # import numpy as np
 
 
@@ -18,7 +17,8 @@ def get_coordinates(image, processed_hand_dict=None):
         #from frame
         mp_hands = processed_hand_dict['mp_hands']
         hands = processed_hand_dict['hands']
-        results = processed_hand_dict['results']
+        hand_landmarks = processed_hand_dict['results']
+
     else:
         #from path, for collection
         img = imread(image)
@@ -27,28 +27,31 @@ def get_coordinates(image, processed_hand_dict=None):
         mp_hands = mp.solutions.hands
         hands = mp_hands.Hands(static_image_mode=True, min_detection_confidence=0.75)
         results = hands.process(img_rgb)
+        if results.multi_hand_landmarks:
+            hand_landmarks = results.multi_hand_landmarks
+        else:
+            hand_landmarks = False
 
     coords={}
 
-    if results.multi_hand_landmarks:
+    if hand_landmarks:
         # total_landmarks = sum(len(hand_landmarks.landmark) for hand_landmarks in results.multi_hand_landmarks)
         # print(total_landmarks)
 
-        for hand_landmarks in results.multi_hand_landmarks:
-            wrist_x = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].x
-            wrist_y = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].y
-            wrist_z = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].z
+        wrist_x = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].x
+        wrist_y = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].y
+        wrist_z = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].z
 
 
-            for i in range(len(hand_landmarks.landmark)):
-                # same order for everyone
-                x = hand_landmarks.landmark[i].x
-                y = hand_landmarks.landmark[i].y
-                z = hand_landmarks.landmark[i].z
+        for i in range(len(hand_landmarks.landmark)):
+            # same order for everyone
+            x = hand_landmarks.landmark[i].x
+            y = hand_landmarks.landmark[i].y
+            z = hand_landmarks.landmark[i].z
 
-                coords[f"x_{i}"]= -(x - wrist_x)
-                coords[f"y_{i}"]= y - wrist_y
-                coords[f"z_{i}"]= z - wrist_z
+            coords[f"x_{i}"]= -(x - wrist_x)
+            coords[f"y_{i}"]= y - wrist_y
+            coords[f"z_{i}"]= z - wrist_z
 
     return coords
 
