@@ -46,7 +46,7 @@ def get_coordinates(image, processed_hand_dict=None):
                 y = hand_landmarks.landmark[i].y
                 z = hand_landmarks.landmark[i].z
 
-                coords[f"x_{i}"]= x - wrist_x
+                coords[f"x_{i}"]= -(x - wrist_x)
                 coords[f"y_{i}"]= y - wrist_y
                 coords[f"z_{i}"]= z - wrist_z
 

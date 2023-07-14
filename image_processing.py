@@ -1,4 +1,4 @@
-from cv2 import cvtColor, COLOR_BGR2RGB, COLOR_RGB2BGR, rectangle, addWeighted, putText, FONT_HERSHEY_PLAIN, LINE_AA
+from cv2 import flip, cvtColor, COLOR_BGR2RGB, COLOR_RGB2BGR, rectangle, addWeighted, putText, FONT_HERSHEY_PLAIN, LINE_AA
 from data_proc import preproc_predict
 from game import translate_words
 from string import ascii_lowercase
@@ -40,6 +40,7 @@ def patience_while_i_load_the_model():
 
 def image_process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
 
+    image = flip(image,1)
     image.flags.writeable = False
     image = cvtColor(image, COLOR_BGR2RGB)
     with lock:  # force running sequentially when multiple threads call this function simultaneously
@@ -55,7 +56,7 @@ def image_process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
     # ipdb.set_trace()
     if results.multi_hand_landmarks and results.multi_handedness:
         for hand_landmarks, handedness in zip(results.multi_hand_landmarks, results.multi_handedness):
-            if handedness.classification[0].label == 'Left':
+            if handedness.classification[0].label == 'Right':
                 mp_drawing.draw_landmarks(
                     image,
                     hand_landmarks,
@@ -104,13 +105,14 @@ def image_process(image, mp_drawing, mp_drawing_styles, mp_hands, hands, model):
 
 
                 putText(image,
-                            text,
-                            (x1+5, y1 - 10),
-                            FONT_HERSHEY_PLAIN,
-                            1.2,
-                            (0, 0, 0),
-                            1,
-                            LINE_AA)
+                        text,
+                        (x1+5, y1 - 10),
+                        FONT_HERSHEY_PLAIN,
+                        1.2,
+                        (0, 0, 0),
+                        1,
+                        LINE_AA)
+
     return image, answer
 
 
