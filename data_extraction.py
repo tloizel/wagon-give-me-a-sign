@@ -25,7 +25,7 @@ def get_coordinates(image, processed_hand_dict=None):
         img_rgb = cvtColor(img, COLOR_BGR2RGB)
 
         mp_hands = mp.solutions.hands
-        hands = mp_hands.Hands(static_image_mode=True, min_detection_confidence=0.3)
+        hands = mp_hands.Hands(static_image_mode=True, min_detection_confidence=0.75)
         results = hands.process(img_rgb)
 
     coords={}
