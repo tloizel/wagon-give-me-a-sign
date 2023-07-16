@@ -105,7 +105,7 @@ def main():
         result_text.write("Writing 👇")
         predictions_list.append(pred)
         counter += 1
-        if counter == int(130 - speed):
+        if counter == int(110 - speed):
         # if counter == 60:
             letter = most_common(predictions_list)
             if letter == "Delete" and len(sentence) >=1 :
