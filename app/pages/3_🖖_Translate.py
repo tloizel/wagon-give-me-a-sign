@@ -55,7 +55,7 @@ def main():
 
 
     # Streamlit UI
-    st.title("Translate ✍️")
+    st.title("Translate 🖖")
 
     st.write("Let your fingers do the talking")
 

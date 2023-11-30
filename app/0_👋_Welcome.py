@@ -24,4 +24,4 @@ st.write("")
 
 st.write("**Page 1.** Learn the ASL alphabet 🧠")
 st.write("**Page 2.** Try to beat your score 🎮")
-st.write("**Page 3.** Sign language to text ✍️")
+st.write("**Page 3.** Sign language to text 🖖")
